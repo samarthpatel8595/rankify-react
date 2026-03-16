@@ -26,7 +26,7 @@ export default function CreateEventPage() {
               placeholder="New Job Title"
               className="w-full border p-2 rounded"
             />
-            <label className="text-[#CFA935] mt-2">Add Job Title</label>
+            <label className="text-[#CFA935] mt-3">Add Job Title</label>
           </div>
 
           <div className="flex flex-col">
@@ -35,7 +35,7 @@ export default function CreateEventPage() {
               placeholder="New Job Position"
               className="w-full border p-2 rounded"
             />
-            <label className="text-[#CFA935] mt-2">Add Job Positions</label>
+            <label className="text-[#CFA935] mt-3">Add Job Positions</label>
           </div>
 
           <div className="flex flex-col">
@@ -44,7 +44,7 @@ export default function CreateEventPage() {
               placeholder="New Location"
               className="w-full border p-2 rounded"
             />
-            <label className="text-[#CFA935] mt-2">New Location</label>
+            <label className="text-[#CFA935] mt-3">New Location</label>
           </div>
 
         </div>
@@ -53,10 +53,8 @@ export default function CreateEventPage() {
       {/* Event Details */}
       <div className="bg-white rounded-lg shadow p-5 space-y-4">
 
-        <h2 className="font-semibold">Event Details</h2>
-
         <div className="flex flex-col">
-          <label className="text-sm mb-1">Event Type</label>
+          <label className="text-sm mb-1 font-semibold">Event Type</label>
           <input
             placeholder=""
             className="w-full border p-2 rounded"
