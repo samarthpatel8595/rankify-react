@@ -12,6 +12,7 @@ const navItems = [
   { label: "Podcasts", href: "/podcasts", icon: "podcasts" },
   { label: "YouTube", href: "/youtube", icon: Youtube },
   { label: "Keyword Research", href: "/keyword-research", icon: Search },
+  { label: "events", href: "/events", icon: DashboardIcon },
 ];
 
 type SidebarProps = {
