@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f4f6;
+  --foreground: #1c1f30;
+  --sunray: #c9aa3f;
+  --floral-white: #fdf9f0;
+  --platinum: #e5e7e8;
+  --independence: #4d5060;
+  --anti-flash: #f3f4f6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-sunray: var(--sunray);
+  --color-floral: var(--floral-white);
+  --color-platinum: var(--platinum);
+  --color-independence: var(--independence);
+  --color-ink: var(--foreground);
+  --color-anti-flash: var(--anti-flash);
+  --font-sans: var(--font-open-sans);
+  --font-display: var(--font-open-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+* {
+  min-width: 0;
+}
