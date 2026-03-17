@@ -54,7 +54,7 @@ const PodcastsPage = () => {
             variant="primary"
           >
             Generate Script
-          </Button>
+          </Button>    
         </div>
       </section>
 

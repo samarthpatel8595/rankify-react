@@ -8,159 +8,178 @@ export default function CreateEventPage() {
   return (
     <div className="p-6 space-y-6">  
 
-       {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Create New Event
-          </h1>
- 
-          <p className="text-sm text-gray-500">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-          </p>
-        </div>
- 
- 
+      {/* Page Title */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold text-[#111827]">
+          Create New Event
+        </h1>
+        <p className="text-sm text-[#6B7280] mt-1">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        </p>
+      </div>
+
+      <div className="space-y-6">
+
         {/* Manage Target Audience */}
-        <div className="bg-white border border-[#E6E8EC] rounded-xl p-6 mb-6 shadow-sm">
- 
-          <h2 className="font-semibold text-gray-700 mb-5">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+          <h2 className="text-base font-semibold text-[#374151] mb-6">
             Manage Target audience Options
           </h2>
- 
+
           <div className="grid grid-cols-3 gap-6">
- 
-            <div>
-              <label className="text-sm text-gray-800">Job Titles</label>
- 
-              <input
-                placeholder="New Job Title"
-                className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"
-              />
- 
-              <p className="text-[#CFA935] text-sm mt-3 cursor-pointer">
-                Add Job Title
-              </p>
-            </div>
- 
-            <div>
-              <label className="text-sm text-gray-600">Job Positions</label>
- 
-              <input
-                placeholder="New Job Position"
-                className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"
-              />
- 
-              <p className="text-[#CFA935] text-sm mt-3 cursor-pointer">
-                Add Job Position
-              </p>
-            </div>
- 
-            <div>
-              <label className="text-sm text-gray-600">Target Locations</label>
- 
-              <input
-                placeholder="New Location"
-                className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"
-              />
- 
-              <p className="text-[#CFA935] text-sm mt-3 cursor-pointer">
-                Add Location
-              </p>
-            </div>
- 
+            {[
+              { label: "Job Titles", placeholder: "New Job Title", btn: "Add Job Title" },
+              { label: "Job Positions", placeholder: "New Job Position", btn: "Add Job Position" },
+              { label: "Target Locations", placeholder: "New Location", btn: "Add Location" }
+            ].map((item, i) => (
+              <div key={i}>
+                <label className="text-sm text-[#6B7280]">{item.label}</label>
+
+                <input
+                  placeholder={item.placeholder}
+                  className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                />
+
+                <p className="text-[#CFA935] text-sm mt-3 cursor-pointer">
+                  {item.btn}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
- 
- 
-        {/* Event Details */}
-        <div className="bg-white border border-[#E6E8EC] rounded-xl p-6 mb-6 shadow-sm">
- 
-          <label className="text-sm text-gray-600">
+
+        {/* Event Type */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+          <h2 className="text-base font-semibold text-[#374151] mb-4">
             Event Type
-          </label>
- 
-          <input className="w-full mt-2 mb-4 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
- 
+          </h2>
+
+          <input className="w-full mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm" />
+
           <div className="grid grid-cols-2 gap-6">
- 
-            <div>
-              <label className="text-sm text-gray-600">Start Date</label>
-              <input type="date" className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
-            </div>
- 
-            <div>
-              <label className="text-sm text-gray-600">End Date</label>
-              <input type="date" className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
-            </div>
- 
-            <div>
-              <label className="text-sm text-gray-600">Start Time</label>
-              <input type="time" className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
-            </div>
- 
-            <div>
-              <label className="text-sm text-gray-600">End Time</label>
-              <input type="time" className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
-            </div>
- 
+            {["Start Date", "End Date", "Start Time", "End Time"].map((item, i) => (
+              <div key={i}>
+                <label className="text-sm text-[#6B7280]">{item}</label>
+                <input
+                  type={item.includes("Time") ? "time" : "date"}
+                  className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                />
+              </div>
+            ))}
           </div>
- 
+
           <div className="mt-4">
-            <label className="text-sm text-gray-600">Event Meet/Team Link</label>
-            <input className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
+            <label className="text-sm text-[#6B7280]">Event Meet/Team Link</label>
+            <input className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm" />
           </div>
- 
+
           <div className="mt-4">
-            <label className="text-sm text-gray-600">Duration</label>
-            <input className="w-full mt-2 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
+            <label className="text-sm text-[#6B7280]">Duration</label>
+            <input className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm" />
           </div>
- 
+
           <div className="mt-4">
-            <label className="text-sm text-gray-600">Event Summary</label>
-            <textarea className="w-full mt-2 h-24 bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"/>
+            <label className="text-sm text-[#6B7280]">Event Summary</label>
+            <textarea className="w-full mt-2 h-28 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm" />
           </div>
- 
         </div>
- 
- 
+
         {/* Target Audience */}
-        <div className="bg-white border border-[#E6E8EC] rounded-xl p-6 mb-6 shadow-sm">
- 
-          <h2 className="font-semibold text-gray-700 mb-4">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+          <h2 className="text-base font-semibold text-[#374151] mb-5">
             Target Audience
           </h2>
- 
+
           <div className="space-y-4">
- 
-            <select className="w-full bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2">
-              <option>Job Titles</option>
-            </select>
- 
-            <select className="w-full bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2">
-              <option>Job Positions</option>
-            </select>
- 
-            <select className="w-full bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2">
-              <option>Target Locations</option>
-            </select>
- 
-            <input
-              placeholder="e.g. 8124567890"
-              className="w-full bg-[#F1F2F4] border border-[#E6E8EC] rounded-lg px-3 py-2"
-            />
- 
+            {["Job Titles", "Job Positions", "Target Locations"].map((item, i) => (
+              <div key={i}>
+                <label className="text-sm text-[#6B7280]">{item}</label>
+                <select className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+                  <option>Select {item}</option>
+                </select>
+              </div>
+            ))}
+
+            <div>
+              <label className="text-sm text-[#6B7280]">Zoom Webinar ID</label>
+              <input
+                placeholder="e.g. 8124567890"
+                className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
           </div>
- 
         </div>
- 
- 
+
+        {/* Welcome Message */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+          <h2 className="text-base font-semibold text-[#374151] mb-4">
+            Welcome Message / First Time Prompt
+          </h2>
+
+          <input
+            placeholder="Hi {name},"
+            className="w-full mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+          />
+
+          <p className="text-xs text-[#9CA3AF] mb-2">Insert Field</p>
+
+          <div className="flex gap-2 mb-4 flex-wrap">
+            {["Add (name)", "Add (event_link)", "Add (button_attending_link)"].map((btn, i) => (
+              <button key={i} className="px-3 py-1 text-xs border border-[#E5E7EB] rounded-md bg-white text-[#374151]">
+                {btn}
+              </button>
+            ))}
+          </div>
+
+          <textarea
+            className="w-full h-32 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            defaultValue={`Thanks for registering for {event_title}. We are excited to have you!
+
+Best,
+The Team`}
+          />
+        </div>
+
+        {/* Thank You Email */}
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+          <h2 className="text-base font-semibold text-[#374151] mb-4">
+            Thank You Email Template
+          </h2>
+
+          <input
+            placeholder="Hi {name},"
+            className="w-full mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+          />
+
+          <p className="text-xs text-[#9CA3AF] mb-2">Insert Field</p>
+
+          <div className="flex gap-2 mb-4 flex-wrap">
+            {["Add (name)", "Add (event_link)", "Add (button_attending_link)"].map((btn, i) => (
+              <button key={i} className="px-3 py-1 text-xs border border-[#E5E7EB] rounded-md bg-white text-[#374151]">
+                {btn}
+              </button>
+            ))}
+          </div>
+
+          <textarea
+            className="w-full h-32 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            defaultValue={`Thank you for attending {event_title}.
+
+You can watch the recording here: {session_link}
+
+Best regards,`}
+          />
+        </div>
+
         {/* Submit */}
-        <button className="bg-[#CFA935] text-white px-6 py-2 rounded-lg shadow hover:bg-[#b89228]">
+        <button className="bg-[#CFA935] text-white text-sm px-6 py-2 rounded-full shadow-sm hover:bg-[#b89228]">
           Submit Event
         </button>
- 
- 
 
-    </div>
+      </div>
+    </div>           
   );
 }
+
+
+
