@@ -14,6 +14,7 @@ const navItems = [
   { label: "YouTube", href: "/youtube", icon: Youtube },
   { label: "Keyword Research", href: "/keyword-research", icon: Search },
   { label: "events", href: "/events", icon: CalendarCheck},
+  { label: "Image Generation", href: "/image-generation", icon: Search },
 ];
 
 type SidebarProps = {

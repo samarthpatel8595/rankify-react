@@ -33,10 +33,15 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           title: "YouTube Manager",
           subtitle: "Link YouTube Videos to Your Blog Posts for Better SEO",
         };
-         case "/events":
+      case "/events":
         return {
           title: "Create New Event",
           subtitle: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+        };
+        case "/image-generation":
+        return {
+          title: "Image Generation",
+          subtitle: "Create and manage your AI-powered content",
         };
       default:
         return null;
