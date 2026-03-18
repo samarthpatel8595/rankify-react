@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, X, Youtube } from "lucide-react";
 import { BlogIcon, DashboardIcon } from "@/components/common/Icons";
+import { CalendarCheck } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/", icon: DashboardIcon },
@@ -12,7 +13,7 @@ const navItems = [
   { label: "Podcasts", href: "/podcasts", icon: "podcasts" },
   { label: "YouTube", href: "/youtube", icon: Youtube },
   { label: "Keyword Research", href: "/keyword-research", icon: Search },
-  { label: "events", href: "/events", icon: DashboardIcon },
+  { label: "events", href: "/events", icon: CalendarCheck},
 ];
 
 type SidebarProps = {

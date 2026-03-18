@@ -1,22 +1,33 @@
 "use client";
 
 import { useState } from "react"; 
-
+import { Filter } from "lucide-react";
 export default function CreateEventPage() {
   const [jobTitle, setJobTitle] = useState("");
 
   return (
-    <div className="p-6 space-y-6">  
+    <div className="p-2 space-y-2">  
 
       {/* Page Title */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#111827]">
-          Create New Event
-        </h1>
-        <p className="text-sm text-[#6B7280] mt-1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        </p>
-      </div>
+      <div className="mb-4 flex items-center justify-between">
+  
+  {/* Left Side */}
+  <div>
+    <h1 className="text-2xl font-semibold text-[#111827]">
+      Create New Event
+    </h1>
+    <p className="text-sm text-[#6B7280] mt-1">
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+    </p>
+  </div>
+
+  {/* Right Side Button */}
+  <button className="flex items-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
+    <Filter className="w-4 h-6" />
+    <span className="text-sm font-medium">Create New Event</span>
+  </button>
+
+</div>
 
       <div className="space-y-6">
 
@@ -26,14 +37,14 @@ export default function CreateEventPage() {
             Manage Target audience Options
           </h2>
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-6 ">
             {[
               { label: "Job Titles", placeholder: "New Job Title", btn: "Add Job Title" },
               { label: "Job Positions", placeholder: "New Job Position", btn: "Add Job Position" },
               { label: "Target Locations", placeholder: "New Location", btn: "Add Location" }
             ].map((item, i) => (
               <div key={i}>
-                <label className="text-sm text-[#6B7280]">{item.label}</label>
+                <label className="text-sm text-[#6B7280] font-bold">{item.label}</label>
 
                 <input
                   placeholder={item.placeholder}
