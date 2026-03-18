@@ -2,6 +2,7 @@
 
 import { useState } from "react"; 
 import { Filter } from "lucide-react";
+import Link from "next/link";
 export default function CreateEventPage() {
   const [jobTitle, setJobTitle] = useState("");
 
@@ -22,10 +23,12 @@ export default function CreateEventPage() {
   </div>
 
   {/* Right Side Button */}
-  <button className="flex items-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
-    <Filter className="w-4 h-6" />
-    <span className="text-sm font-medium">Create New Event</span>
-  </button>
+  <Link href="/events/create">
+    <button className="flex items-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
+      <Filter className="w-4 h-6" />
+      <span className="text-sm font-medium">Create New Event</span>
+    </button>
+  </Link>
 
 </div>
 
