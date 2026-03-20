@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, X, Youtube } from "lucide-react";
+import { Search, X, Youtube, ImageIcon } from "lucide-react";
 import { BlogIcon, DashboardIcon } from "@/components/common/Icons";
 import { CalendarCheck } from "lucide-react";
 
@@ -13,8 +13,8 @@ const navItems = [
   { label: "Podcasts", href: "/podcasts", icon: "podcasts" },
   { label: "YouTube", href: "/youtube", icon: Youtube },
   { label: "Keyword Research", href: "/keyword-research", icon: Search },
-  { label: "events", href: "/events", icon: CalendarCheck},
-  { label: "Image Generation", href: "/image-generation", icon: Search },
+  { label: "Events", href: "/events", icon: CalendarCheck},
+  { label: "Image Generation", href: "/image-generation", icon:ImageIcon},
 ];
 
 type SidebarProps = {

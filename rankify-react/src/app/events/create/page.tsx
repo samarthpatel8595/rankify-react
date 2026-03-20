@@ -1,5 +1,5 @@
 "use client";
-
+import { Filter } from "lucide-react";
 export default function CreateEventPage() {
   return (
     <div className="p-2 space-y-6">
@@ -16,8 +16,9 @@ export default function CreateEventPage() {
         </div>
 
         {/* RIGHT BUTTON (FIXED STYLE) */}
-        <button className="bg-[#F9FAFB] border border-[#E5E7EB] text-[12px] px-4 py-2 rounded-md text-[#374151]">
-          Event Dashboard
+        <button className="flex items-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
+          <Filter className="w-4 h-6" />
+          <span className="text-sm font-medium">Event Dashboard</span>
         </button>
       </div>
 

@@ -7,7 +7,7 @@ export default function ImageGenerationPage() {
       {/* Header */}
       <div className="mb-5">
         <h1 className="text-[22px] font-semibold text-[#111827]">
-          Image Generation
+          Text → Podcast → Multi-Speaker Audio      
         </h1>
         <p className="text-sm text-[#6B7280] mt-1">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry.
