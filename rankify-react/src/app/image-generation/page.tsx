@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 export default function ImageGenerationPage() {
   return (
     <div className="p-2 space-y-6">
@@ -55,9 +55,11 @@ export default function ImageGenerationPage() {
           </div>
 
           {/* ✅ BUTTON ONLY LEFT SIDE */}
+          <Link href="/image-generation/text-to-podcast">
           <button className="w-full bg-[#C9A227] text-white py-3 rounded-xl font-medium">
             ✨ Generate Images
           </button>
+          </Link>
 
         </div>
 
@@ -105,10 +107,12 @@ export default function ImageGenerationPage() {
             <p className="mt-2">Drag and drop file here</p>
             <p className="text-xs mt-1">Limit 200MB per file • PNG, JPG, ...</p>
           </div>
-
+           
           <button className="w-full mt-3 border border-[#E5E7EB] rounded-lg py-2 text-sm">
             Browse files
           </button>
+          
+          
         </div>
       </div>
     </div>
