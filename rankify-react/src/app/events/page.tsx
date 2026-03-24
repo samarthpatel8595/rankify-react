@@ -3,44 +3,44 @@
 import { useState } from "react"; 
 import { Filter } from "lucide-react";
 import Link from "next/link";
+
 export default function CreateEventPage() {
   const [jobTitle, setJobTitle] = useState("");
 
   return (
-    <div className="p-2 space-y-2">  
+    <div className="p-3 md:p-6 space-y-4">  
 
-      {/* Page Title */}
-      <div className="mb-4 flex items-center justify-between">
-  
-  {/* Left Side */}
-  <div>
-    <h1 className="text-2xl font-semibold text-[#111827]">
-      Create New Event
-    </h1>
-    <p className="text-sm text-[#6B7280] mt-1">
-      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    </p>
-  </div>
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        
+        {/* Left */}
+        <div>
+          <h1 className="text-xl md:text-2xl font-semibold text-[#111827]">
+            Create New Event
+          </h1>
+          <p className="text-sm text-[#6B7280] mt-1">
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+          </p>
+        </div>
 
-  {/* Right Side Button */}
-  <Link href="/events/create">
-    <button className="flex items-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
-      <Filter className="w-4 h-6" />
-      <span className="text-sm font-medium">Create New Event</span>
-    </button>
-  </Link>
-
-</div>
+        {/* Right Button */}
+        <Link href="/events/create" className="w-full md:w-auto">
+          <button className="w-full md:w-auto flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
+            <Filter className="w-4 h-6" />
+            <span className="text-sm font-medium">Create New Event</span>
+          </button>
+        </Link>
+      </div>
 
       <div className="space-y-6">
 
         {/* Manage Target Audience */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 md:p-6">
           <h2 className="text-base font-semibold text-[#374151] mb-6">
             Manage Target audience Options
           </h2>
 
-          <div className="grid grid-cols-3 gap-6 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {[
               { label: "Job Titles", placeholder: "New Job Title", btn: "Add Job Title" },
               { label: "Job Positions", placeholder: "New Job Position", btn: "Add Job Position" },
@@ -63,14 +63,14 @@ export default function CreateEventPage() {
         </div>
 
         {/* Event Type */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 md:p-6">
           <h2 className="text-base font-semibold text-[#374151] mb-4">
             Event Type
           </h2>
 
           <input className="w-full mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm" />
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {["Start Date", "End Date", "Start Time", "End Time"].map((item, i) => (
               <div key={i}>
                 <label className="text-sm text-[#6B7280]">{item}</label>
@@ -99,7 +99,7 @@ export default function CreateEventPage() {
         </div>
 
         {/* Target Audience */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 md:p-6">
           <h2 className="text-base font-semibold text-[#374151] mb-5">
             Target Audience
           </h2>
@@ -125,7 +125,7 @@ export default function CreateEventPage() {
         </div>
 
         {/* Welcome Message */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 md:p-6">
           <h2 className="text-base font-semibold text-[#374151] mb-4">
             Welcome Message / First Time Prompt
           </h2>
@@ -137,7 +137,7 @@ export default function CreateEventPage() {
 
           <p className="text-xs text-[#9CA3AF] mb-2">Insert Field</p>
 
-          <div className="flex gap-2 mb-4 flex-wrap">
+          <div className="flex flex-wrap gap-2 mb-4">
             {["Add (name)", "Add (event_link)", "Add (button_attending_link)"].map((btn, i) => (
               <button key={i} className="px-3 py-1 text-xs border border-[#E5E7EB] rounded-md bg-white text-[#374151]">
                 {btn}
@@ -155,7 +155,7 @@ The Team`}
         </div>
 
         {/* Thank You Email */}
-        <div className="bg-white border border-[#E5E7EB] rounded-xl p-6">
+        <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 md:p-6">
           <h2 className="text-base font-semibold text-[#374151] mb-4">
             Thank You Email Template
           </h2>
@@ -167,7 +167,7 @@ The Team`}
 
           <p className="text-xs text-[#9CA3AF] mb-2">Insert Field</p>
 
-          <div className="flex gap-2 mb-4 flex-wrap">
+          <div className="flex flex-wrap gap-2 mb-4">
             {["Add (name)", "Add (event_link)", "Add (button_attending_link)"].map((btn, i) => (
               <button key={i} className="px-3 py-1 text-xs border border-[#E5E7EB] rounded-md bg-white text-[#374151]">
                 {btn}
@@ -185,8 +185,8 @@ Best regards,`}
           />
         </div>
 
-        {/* Submit */}
-        <button className="bg-[#CFA935] text-white text-sm px-6 py-2 rounded-full shadow-sm hover:bg-[#b89228]">
+        {/* SUBMIT */}
+        <button className="w-full md:w-auto bg-[#CFA935] text-white text-sm px-6 py-3 md:py-2 rounded-full shadow-sm hover:bg-[#b89228]">
           Submit Event
         </button>
 
@@ -194,6 +194,3 @@ Best regards,`}
     </div>           
   );
 }
-
-
-

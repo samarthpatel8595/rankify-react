@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
+
 export default function ImageGenerationPage() {
   return (
-    <div className="p-2 space-y-6">
+    <div className="p-3 md:p-6 space-y-6">
 
       {/* Header */}
       <div className="mb-5">
-        <h1 className="text-[22px] font-semibold text-[#111827]">
-          Image Generartion      
+        <h1 className="text-[20px] md:text-[22px] font-semibold text-[#111827]">
+          Image Generartion
         </h1>
         <p className="text-sm text-[#6B7280] mt-1">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -15,12 +16,12 @@ export default function ImageGenerationPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* LEFT */}
-        <div className="col-span-2 space-y-4">
+        <div className="md:col-span-2 space-y-4">
 
-          <div className="bg-white p-5 rounded-xl border border-[#E5E7EB]">
+          <div className="bg-white p-4 md:p-5 rounded-xl border border-[#E5E7EB]">
 
             <h2 className="text-sm font-semibold text-[#374151] mb-4">
               Post Content (STRICT FORMAT)
@@ -54,16 +55,14 @@ export default function ImageGenerationPage() {
             />
           </div>
 
-          {/* ✅ BUTTON ONLY LEFT SIDE */}
-          
+          {/* BUTTON */}
           <button className="w-full bg-[#C9A227] text-white py-3 rounded-xl font-medium">
             ✨ Generate Images
           </button>
-          
         </div>
 
         {/* RIGHT */}
-        <div className="bg-white p-5 rounded-xl border border-[#E5E7EB]">
+        <div className="bg-white p-4 md:p-5 rounded-xl border border-[#E5E7EB]">
 
           <h2 className="text-sm font-semibold text-[#374151] mb-4">
             ✨ Configuration
@@ -101,17 +100,15 @@ export default function ImageGenerationPage() {
 
           {/* UPLOAD */}
           <label className="text-xs text-[#6B7280]">Upload Logo (Optional)</label>
-          <div className="mt-1 border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center text-[#6B7280] text-sm">
+          <div className="mt-1 border-2 border-dashed border-[#E5E7EB] rounded-xl p-4 md:p-6 text-center text-[#6B7280] text-sm">
             ⬆️
             <p className="mt-2">Drag and drop file here</p>
             <p className="text-xs mt-1">Limit 200MB per file • PNG, JPG, ...</p>
           </div>
-           
+
           <button className="w-full mt-3 border border-[#E5E7EB] rounded-lg py-2 text-sm">
             Browse files
           </button>
-          
-          
         </div>
       </div>
     </div>
