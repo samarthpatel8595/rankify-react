@@ -58,7 +58,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
           onSelectProject(defaultProject);
         }
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     };
 

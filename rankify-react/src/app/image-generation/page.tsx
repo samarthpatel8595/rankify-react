@@ -113,4 +113,4 @@ export default function ImageGenerationPage() {
       </div>
     </div>
   );
-}
+}       
