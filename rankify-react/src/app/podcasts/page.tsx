@@ -1,83 +1,120 @@
-import { ChevronDown, MicVocal, Sparkles } from "lucide-react";
-import Button from "@/components/common/Button";
-
-const PodcastsPage = () => {
+"use client";
+import Link from "next/link";
+export default function Podcast() {
   return (
-    <div className="flex flex-col gap-5">
-      <section className="rounded-2xl border border-platinum bg-white p-4 shadow-[0_16px_35px_-28px_rgba(28,31,48,0.45)] sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="grid flex-1 gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-2 text-xs font-semibold text-independence">
-              Select Blog Post
-              <div className="relative">
-                <select
-                  className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-10 text-sm text-ink shadow-sm outline-none transition focus:border-sunray"
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    Choose a blog post
-                  </option>
-                  <option>Project Proposal</option>
-                  <option>Design Mockups</option>
-                  <option>Brand Assets</option>
-                </select>
-                <ChevronDown
-                  size={16}
-                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-              </div>
-            </label>
-            <label className="flex flex-col gap-2 text-xs font-semibold text-independence">
-              Podcast Style
-              <div className="relative">
-                <select
-                  className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 pr-10 text-sm text-ink shadow-sm outline-none transition focus:border-sunray"
-                  defaultValue=""
-                >
-                  <option value="" disabled>
-                    Select a style
-                  </option>
-                  <option>Interview</option>
-                  <option>Solo commentary</option>
-                  <option>News roundup</option>
-                </select>
-                <ChevronDown
-                  size={16}
-                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-              </div>
-            </label>
-          </div>
-          <Button
-            className="w-full rounded-xl px-5 py-3 text-sm font-normal shadow-[0_12px_26px_-16px_rgba(201,170,63,0.85)] sm:w-auto"
-            icon={<Sparkles size={16} />}
-            variant="primary"
-          >
-            Generate Script
-          </Button>    
-        </div>
-      </section>
+    <div className="p-2 space-y-6">
 
-      <section className="rounded-2xl border border-platinum bg-white p-6 text-center shadow-[0_16px_35px_-28px_rgba(28,31,48,0.45)] sm:p-10">
-        <div className="mx-auto flex max-w-md flex-col items-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-sunray/10 text-sunray">
-            <MicVocal size={34} />
-          </span>
-          <h2 className="mt-4 text-sm font-semibold text-ink sm:text-base">
-            No podcasts yet
-          </h2>
-          <p className="mt-2 text-xs text-independence sm:text-sm">
-            Generate your first podcast script from a blog post.
-          </p>
-          <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-sunray" />
-            <span className="h-2 w-2 rounded-full bg-slate-200" />
-            <span className="h-2 w-2 rounded-full bg-slate-200" />
+      {/* Header */}
+      <div className="mb-5">
+        <h1 className="text-[22px] font-semibold text-[#111827]">
+          Text → Podcast → Multi-Speaker Audio      
+        </h1>
+        <p className="text-sm text-[#6B7280] mt-1">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        </p>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-3 gap-6">
+
+        {/* LEFT */}
+        <div className="col-span-2 space-y-4">
+
+          <div className="bg-white p-5 rounded-xl border border-[#E5E7EB]">
+
+            <h2 className="text-sm font-semibold text-[#374151] mb-4">
+              Post Content (STRICT FORMAT)
+            </h2>
+
+            {/* TITLE */}
+            <label className="text-xs text-[#6B7280]">TITLE:</label>
+            <input
+              defaultValue="Future-Proof Your Career with AI CERTs®"
+              className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            />
+
+            {/* SUBTITLE */}
+            <label className="text-xs text-[#6B7280]">SUBTITLE:</label>
+            <input
+              defaultValue="Become Certified. Become AI-Ready."
+              className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            />
+
+            {/* BODY */}
+            <label className="text-xs text-[#6B7280]">BODY:</label>
+            <textarea
+              className="w-full h-32 mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            />
+
+            {/* CTA */}
+            <label className="text-xs text-[#6B7280]">CTA BUTTON:</label>
+            <input
+              defaultValue="Start Now"
+              className="w-full mt-1 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            />
           </div>
+
+          {/* ✅ BUTTON ONLY LEFT SIDE */}
+          <Link href="/image-generation/text-to-podcast">
+          <button className="w-full bg-[#C9A227] text-white py-3 rounded-xl font-medium">
+            ✨ Generate Images
+          </button>
+          </Link>
+
         </div>
-      </section>
+
+        {/* RIGHT */}
+        <div className="bg-white p-5 rounded-xl border border-[#E5E7EB]">
+
+          <h2 className="text-sm font-semibold text-[#374151] mb-4">
+            ✨ Configuration
+          </h2>
+
+          {/* MODEL */}
+          <label className="text-xs text-[#6B7280]">Gemini Model</label>
+          <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+            <option>Gemini 3 Pro Image Premium Gener</option>
+          </select>
+
+          {/* NUMBER */}
+          <label className="text-xs text-[#6B7280]">Number of Images</label>
+          <div className="flex items-center gap-2 mt-1 mb-4">
+            <button className="w-8 h-8 border border-[#E5E7EB] rounded-md">-</button>
+            <input
+              value="1"
+              readOnly
+              className="flex-1 border border-[#E5E7EB] rounded-lg text-center py-1 bg-[#F3F4F6]"
+            />
+            <button className="w-8 h-8 border border-[#E5E7EB] rounded-md">+</button>
+          </div>
+
+          {/* ASPECT */}
+          <label className="text-xs text-[#6B7280]">Aspect Ratio</label>
+          <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+            <option></option>
+          </select>
+
+          {/* RESOLUTION */}
+          <label className="text-xs text-[#6B7280]">Image Resolution</label>
+          <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+            <option></option>
+          </select>
+
+          {/* UPLOAD */}
+          <label className="text-xs text-[#6B7280]">Upload Logo (Optional)</label>
+          <div className="mt-1 border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center text-[#6B7280] text-sm">
+            ⬆️
+            <p className="mt-2">Drag and drop file here</p>
+            <p className="text-xs mt-1">Limit 200MB per file • PNG, JPG, ...</p>
+          </div>
+           
+          <button className="w-full mt-3 border border-[#E5E7EB] rounded-lg py-2 text-sm">
+            Browse files
+          </button>
+          
+          
+        </div>
+      </div>
     </div>
   );
 }
-
-export default PodcastsPage;
