@@ -55,12 +55,11 @@ export default function ImageGenerationPage() {
           </div>
 
           {/* ✅ BUTTON ONLY LEFT SIDE */}
-          <Link href="/image-generation/text-to-podcast">
+          
           <button className="w-full bg-[#C9A227] text-white py-3 rounded-xl font-medium">
             ✨ Generate Images
           </button>
-          </Link>
-
+          
         </div>
 
         {/* RIGHT */}

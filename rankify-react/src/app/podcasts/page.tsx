@@ -1,120 +1,118 @@
 "use client";
-import Link from "next/link";
-export default function Podcast() {
-  return (
-    <div className="p-2 space-y-6">
 
-      {/* Header */}
-      <div className="mb-5">
-        <h1 className="text-[22px] font-semibold text-[#111827]">
-          Text → Podcast → Multi-Speaker Audio      
-        </h1>
-        <p className="text-sm text-[#6B7280] mt-1">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        </p>
-      </div>
+import LayoutShell from "@/components/common/LayoutShell";
 
-      {/* Grid */}
-      <div className="grid grid-cols-3 gap-6">
+export default function TextToPodcastPage() {
+    return (
 
-        {/* LEFT */}
-        <div className="col-span-2 space-y-4">
+        <div className="p-2  space-y-6">
 
-          <div className="bg-white p-5 rounded-xl border border-[#E5E7EB]">
+            {/* MAIN CONTAINER */}
 
-            <h2 className="text-sm font-semibold text-[#374151] mb-4">
-              Post Content (STRICT FORMAT)
-            </h2>
 
-            {/* TITLE */}
-            <label className="text-xs text-[#6B7280]">TITLE:</label>
-            <input
-              defaultValue="Future-Proof Your Career with AI CERTs®"
-              className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-            />
+            <div className="grid grid-cols-3 gap-6">
 
-            {/* SUBTITLE */}
-            <label className="text-xs text-[#6B7280]">SUBTITLE:</label>
-            <input
-              defaultValue="Become Certified. Become AI-Ready."
-              className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-            />
+                {/* LEFT SIDE */}
+                <div className="col-span-2 bg-white border border-[#E5E7EB] rounded-xl p-5 flex flex-col justify-between">
 
-            {/* BODY */}
-            <label className="text-xs text-[#6B7280]">BODY:</label>
-            <textarea
-              className="w-full h-32 mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-            />
+                    {/* TOP CONTENT */}
+                    <div>
+                        <h1 className="text-[18px] font-semibold text-[#111827]">
+                            Text to Podcast
+                        </h1>
 
-            {/* CTA */}
-            <label className="text-xs text-[#6B7280]">CTA BUTTON:</label>
-            <input
-              defaultValue="Start Now"
-              className="w-full mt-1 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-            />
-          </div>
+                        <p className="text-[13px] text-[#6B7280] mt-1">
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        </p>
 
-          {/* ✅ BUTTON ONLY LEFT SIDE */}
-          <Link href="/image-generation/text-to-podcast">
-          <button className="w-full bg-[#C9A227] text-white py-3 rounded-xl font-medium">
-            ✨ Generate Images
-          </button>
-          </Link>
+                        {/* INPUT TITLE */}
+                        <div className="flex items-center gap-2 mt-5 mb-3">
+                            <span className="text-sm font-medium text-[#111827]">
+                                ✨ Input Content
+                            </span>
+                        </div>
+
+                        {/* TEXTAREA */}
+                        <textarea
+                            placeholder="Paste article, paper, or notes here"
+                            className="w-full h-[420px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-4 text-sm outline-none resize-none"
+                        />
+                    </div>
+
+                    {/* BUTTON */}
+                    <button className="mt-5 w-full bg-[#CFA935] hover:bg-[#b8932f] transition text-white py-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2">
+                        <span>✨</span>
+                        Generate Podcast Audio
+                    </button>
+
+                </div>
+
+                {/* RIGHT SIDE */}
+                <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-5 space-y-5">
+
+                    {/* TITLE */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-[#111827]">
+                            ⚙ Configuration
+                        </span>
+                    </div>
+
+                    {/* Gemini Text Model */}
+                    <div>
+                        <label className="text-xs text-[#6B7280]">Gemini Text Model</label>
+                        <select className="w-full mt-1 bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+                            <option></option>
+                        </select>
+                    </div>
+
+                    {/* Gemini TTS Model */}
+                    <div>
+                        <label className="text-xs text-[#6B7280]">Gemini TTS Model</label>
+                        <select className="w-full mt-1 bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+                            <option></option>
+                        </select>
+                    </div>
+
+                    {/* ✅ CREATIVITY (NOW HERE) */}
+                    <div>
+                        <label className="text-xs text-[#6B7280] flex justify-between">
+                            Creativity <span>0 (0)</span>
+                        </label>
+
+                        <input
+                            type="range"
+                            className="w-full mt-6 appearance-none bg-[#E5E7EB] h-[2px] outline-none 
+                                   [&::-webkit-slider-thumb]:appearance-none 
+                                   [&::-webkit-slider-thumb]:w-0 
+                                    [&::-webkit-slider-thumb]:h-0 
+                                     [&::-moz-range-thumb]:w-0 
+                                    [&::-moz-range-thumb]:h-0"
+                        />
+                    </div>
+                    <div className="w-full h-[2px] bg-[#E5E7EB] mt-2 rounded"></div>
+
+                    {/* Speaker 1 */}
+                    <div>
+                        <label className="text-xs text-[#6B7280]">Speaker 1 Voice</label>
+                        <select className="w-full mt-1 bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+                            <option></option>
+                        </select>
+                    </div>
+
+                    {/* Speaker 2 */}
+                    <div>
+                        <label className="text-xs text-[#6B7280]">Speaker 2 Voice</label>
+                        <select className="w-full mt-1 bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+                            <option></option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
 
         </div>
 
-        {/* RIGHT */}
-        <div className="bg-white p-5 rounded-xl border border-[#E5E7EB]">
-
-          <h2 className="text-sm font-semibold text-[#374151] mb-4">
-            ✨ Configuration
-          </h2>
-
-          {/* MODEL */}
-          <label className="text-xs text-[#6B7280]">Gemini Model</label>
-          <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-            <option>Gemini 3 Pro Image Premium Gener</option>
-          </select>
-
-          {/* NUMBER */}
-          <label className="text-xs text-[#6B7280]">Number of Images</label>
-          <div className="flex items-center gap-2 mt-1 mb-4">
-            <button className="w-8 h-8 border border-[#E5E7EB] rounded-md">-</button>
-            <input
-              value="1"
-              readOnly
-              className="flex-1 border border-[#E5E7EB] rounded-lg text-center py-1 bg-[#F3F4F6]"
-            />
-            <button className="w-8 h-8 border border-[#E5E7EB] rounded-md">+</button>
-          </div>
-
-          {/* ASPECT */}
-          <label className="text-xs text-[#6B7280]">Aspect Ratio</label>
-          <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-            <option></option>
-          </select>
-
-          {/* RESOLUTION */}
-          <label className="text-xs text-[#6B7280]">Image Resolution</label>
-          <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-            <option></option>
-          </select>
-
-          {/* UPLOAD */}
-          <label className="text-xs text-[#6B7280]">Upload Logo (Optional)</label>
-          <div className="mt-1 border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center text-[#6B7280] text-sm">
-            ⬆️
-            <p className="mt-2">Drag and drop file here</p>
-            <p className="text-xs mt-1">Limit 200MB per file • PNG, JPG, ...</p>
-          </div>
-           
-          <button className="w-full mt-3 border border-[#E5E7EB] rounded-lg py-2 text-sm">
-            Browse files
-          </button>
-          
-          
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
