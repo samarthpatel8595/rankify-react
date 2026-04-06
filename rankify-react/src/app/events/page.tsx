@@ -31,7 +31,7 @@ export default function CreateEventPage() {
             className="w-full md:w-auto flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition"
           >
             <Filter className="w-4 h-6" />
-            <span className="text-sm font-medium">Menu</span>
+            <span className="text-sm font-medium">Create New Event</span>
           </button>
 
           {open && (
