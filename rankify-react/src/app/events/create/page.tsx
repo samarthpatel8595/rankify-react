@@ -1,7 +1,13 @@
 "use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Filter } from "lucide-react";
 
 export default function CreateEventPage() {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+
   return (
     <div className="p-3 md:p-6 space-y-6">
 
@@ -16,11 +22,42 @@ export default function CreateEventPage() {
           </p>
         </div>
 
-        {/* BUTTON */}
-        <button className="flex items-center justify-center md:justify-start gap-2 w-full md:w-auto bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
-          <Filter className="w-4 h-6" />
-          <span className="text-sm font-medium">Event Dashboard</span>
-        </button>
+        {/* DROPDOWN */}
+        <div className="relative w-full md:w-auto">
+          <button
+            onClick={() => setOpen(!open)}
+            className="flex items-center justify-center md:justify-start gap-2 w-full md:w-auto bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition"
+          >
+            <Filter className="w-4 h-6" />
+            <span className="text-sm font-medium">Menu</span>
+          </button>
+
+          {open && (
+            <div className="absolute right-0 mt-2 w-full md:w-52 bg-white border border-[#E5E7EB] rounded-lg shadow-md z-50">
+
+              <button
+                onClick={() => {
+                  router.push("/events");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                Create New Event
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push("/events/create");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                Event Dashboard
+              </button>
+
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ===== CARD 1 ===== */}
@@ -30,7 +67,6 @@ export default function CreateEventPage() {
           All Events Overview
         </h2>
 
-        {/* TABLE SCROLL */}
         <div className="overflow-x-auto">
           <table className="min-w-[600px] w-full text-[12px]">
             <thead className="text-[#9CA3AF]">
@@ -52,7 +88,9 @@ export default function CreateEventPage() {
               ].map((row, i) => (
                 <tr key={i} className="border-t border-[#F1F1F1]">
                   {row.map((cell, j) => (
-                    <td key={j} className="py-2 whitespace-nowrap">{cell}</td>
+                    <td key={j} className="py-2 whitespace-nowrap">
+                      {cell}
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -157,7 +195,9 @@ export default function CreateEventPage() {
               ].map((row, i) => (
                 <tr key={i} className="border-t border-[#F1F1F1]">
                   {row.map((cell, j) => (
-                    <td key={j} className="py-2 whitespace-nowrap">{cell}</td>
+                    <td key={j} className="py-2 whitespace-nowrap">
+                      {cell}
+                    </td>
                   ))}
                 </tr>
               ))}

@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react"; 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Filter } from "lucide-react";
-import Link from "next/link";
 
 export default function CreateEventPage() {
-  const [jobTitle, setJobTitle] = useState("");
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   return (
-    <div className="p-3 md:p-6 space-y-4">  
+    <div className="p-3 md:p-6 space-y-4">
 
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-        
-        {/* Left */}
+
+        {/* LEFT */}
         <div>
           <h1 className="text-xl md:text-2xl font-semibold text-[#111827]">
             Create New Event
@@ -23,15 +24,43 @@ export default function CreateEventPage() {
           </p>
         </div>
 
-        {/* Right Button */}
-        <Link href="/events/create" className="w-full md:w-auto">
-          <button className="w-full md:w-auto flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition">
+        {/* DROPDOWN MENU */}
+        <div className="relative w-full md:w-auto">
+          <button
+            onClick={() => setOpen(!open)}
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-white hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl shadow-sm transition"
+          >
             <Filter className="w-4 h-6" />
-            <span className="text-sm font-medium">Create New Event</span>
+            <span className="text-sm font-medium">Menu</span>
           </button>
-        </Link>
+
+          {open && (
+            <div className="absolute right-0 mt-2 w-52 bg-white border rounded-lg shadow-md z-50">
+              <button
+                onClick={() => {
+                  router.push("/events");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                Create New Event
+              </button>
+
+              <button
+                onClick={() => {
+                  router.push("/events/create");
+                  setOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              >
+                Event Dashboard
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* ===== ALL CONTENT START ===== */}
       <div className="space-y-6">
 
         {/* Manage Target Audience */}
@@ -181,16 +210,16 @@ The Team`}
 
 You can watch the recording here: {session_link}
 
-Best regards,`}
+Best regards`}
           />
         </div>
 
         {/* SUBMIT */}
-        <button className="w-full md:w-auto bg-[#CFA935] text-white text-sm px-6 py-3 md:py-2 rounded-full shadow-sm hover:bg-[#b89228]">
+        <button className="w-full md:w-auto bg-[#CFA935] text-white text-sm px-6 py-3 rounded-full">
           Submit Event
         </button>
 
       </div>
-    </div>           
+    </div>
   );
 }
