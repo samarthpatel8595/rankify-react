@@ -127,7 +127,7 @@ export default function CreateEventPage() {
             Webinar Status Legend
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 text-[11px] text-[#374151]">
+          <div className="grid grid-cols-1 gap-y-1 text-[11px] text-[#374151]">
             <p><span className="text-yellow-500">■</span> Email Sent - Awaiting Registration</p>
             <p><span className="text-green-500">■</span> Registered - Completed Webinar Registration</p>
             <p><span className="text-blue-500">■</span> Joined - Attended the Webinar</p>
