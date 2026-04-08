@@ -1,15 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LayoutShell from "@/components/common/LayoutShell";
-import { generatePodcast } from "@/services/podcasts";
+import { generatePodcast, fetchModels } from "@/services/podcasts";
+import { fetchVoices } from "@/services/podcasts";
 
 export default function TextToPodcastPage() {
   const [text, setText] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ DOWNLOAD FUNCTION (BEST METHOD)
+  const [ttsModels, setTtsModels] = useState<any[]>([]);
+  const [selectedTTS, setSelectedTTS] = useState(
+    "gemini-2.5-flash-preview-tts"
+  );
+  const [textModels, setTextModels] = useState<any[]>([]);
+  const [selectedTextModel, setSelectedTextModel] = useState(
+    "gemini-3-pro-preview"
+  );
+  const [voices, setVoices] = useState<any[]>([]);
+  const [speaker1, setSpeaker1] = useState("achernar");
+  const [speaker2, setSpeaker2] = useState("enceladus");
+
+  // ✅ USE CORRECT FUNCTION
+  useEffect(() => {
+    const loadModels = async () => {
+      const data = await fetchModels();
+
+      console.log("API DATA", data);
+
+      setTtsModels(data?.tts_models || []);
+      setTextModels(data?.text_models || []);
+    };
+
+    loadModels();
+  }, []);
+ useEffect(() => {
+  const loadVoices = async () => {
+    const data = await fetchVoices(); // ✅ service function use
+
+    console.log("VOICES 👉", data);
+
+    setVoices(data?.voices || []);
+  };
+
+  loadVoices();
+}, []);
   const downloadAudio = async (url: string) => {
     try {
       const response = await fetch(url);
@@ -42,10 +78,10 @@ export default function TextToPodcastPage() {
 
       const res = await generatePodcast({
         input_text: text,
-        speaker_voices: ["achernar", "enceladus"],
+        speaker_voices: [speaker1, speaker2],
         num_speakers: 2,
-        tts_model: "gemini-2.5-flash-preview-tts",
-        text_model: "gemini-3-pro-preview",
+        tts_model: selectedTTS,
+        text_model: selectedTextModel,
         temperature: 0.7,
       });
 
@@ -59,8 +95,6 @@ export default function TextToPodcastPage() {
 
       if (finalUrl) {
         setAudioUrl(finalUrl);
-
-        // ✅ AUTO DOWNLOAD
         await downloadAudio(finalUrl);
       }
     } catch (error) {
@@ -72,7 +106,6 @@ export default function TextToPodcastPage() {
 
   return (
     <>
-      {/* ✅ LOADER */}
       {loading && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
           <div className="bg-white px-6 py-5 rounded-xl shadow-lg text-center w-full max-w-sm">
@@ -84,13 +117,10 @@ export default function TextToPodcastPage() {
         </div>
       )}
 
-      {/* ✅ MAIN UI */}
       <div className="p-3 sm:p-4 md:p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* LEFT SIDE */}
           <div className="lg:col-span-2 bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
-
             <div>
               <h1 className="text-base sm:text-lg font-semibold text-[#111827]">
                 Text to Podcast
@@ -104,7 +134,6 @@ export default function TextToPodcastPage() {
                 ✨ Input Content
               </div>
 
-              {/* ✅ TEXTAREA */}
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -113,7 +142,6 @@ export default function TextToPodcastPage() {
               />
             </div>
 
-            {/* ✅ BUTTON */}
             <button
               onClick={handleGenerate}
               disabled={loading}
@@ -122,7 +150,6 @@ export default function TextToPodcastPage() {
               {loading ? "Generating..." : "✨ Generate Podcast Audio"}
             </button>
 
-            {/* ✅ AUDIO PLAYER */}
             {audioUrl && (
               <audio controls className="mt-4 w-full">
                 <source src={audioUrl} />
@@ -130,7 +157,6 @@ export default function TextToPodcastPage() {
             )}
           </div>
 
-          {/* RIGHT SIDE */}
           <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-4 sm:p-5 space-y-4 sm:space-y-5">
 
             <div className="text-sm font-medium">⚙ Configuration</div>
@@ -139,10 +165,21 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Gemini Text Model
               </label>
-              <select className="w-full mt-1  border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-                <option>gemini-3-pro-preview</option>
-                <option>ChatGpt</option>
-                <option>Directorai</option>
+
+              <select
+                value={selectedTextModel}
+                onChange={(e) => setSelectedTextModel(e.target.value)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              >
+                {textModels.length > 0 ? (
+                  textModels.map((model) => (
+                    <option key={model.id} value={model.id}>
+                      {model.name}
+                    </option>
+                  ))
+                ) : (
+                  <option>No models found</option>
+                )}
               </select>
             </div>
 
@@ -150,10 +187,20 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Gemini TTS Model
               </label>
-              <select className="w-full mt-1  border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-                <option>gemini-2.5-flash-preview-tts</option>
-                <option>ChatGpt</option>
-                <option>Directorai</option>
+              <select
+                value={selectedTTS}
+                onChange={(e) => setSelectedTTS(e.target.value)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              >
+                {ttsModels.length > 0 ? (
+                  ttsModels.map((model) => (
+                    <option key={model.id} value={model.id}>
+                      {model.name}
+                    </option>
+                  ))
+                ) : (
+                  <option>Loading...</option>
+                )}
               </select>
             </div>
 
@@ -170,9 +217,20 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Speaker 1 Voice
               </label>
-              <select className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-                <option>achernar</option>
-                <option>enceladus</option>
+              <select
+                value={speaker1}
+                onChange={(e) => setSpeaker1(e.target.value)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              >
+                {voices.length > 0 ? (
+                  voices.map((voice) => (
+                    <option key={voice.id} value={voice.id}>
+                      {voice.name} ({voice.description})
+                    </option>
+                  ))
+                ) : (
+                  <option>Loading...</option>
+                )}
               </select>
             </div>
 
@@ -180,9 +238,20 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Speaker 2 Voice
               </label>
-              <select className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
-                <option>enceladus</option>
-                <option>achernar</option>
+              <select
+                value={speaker2}
+                onChange={(e) => setSpeaker2(e.target.value)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              >
+                {voices.length > 0 ? (
+                  voices.map((voice) => (
+                    <option key={voice.id} value={voice.id}>
+                      {voice.name}
+                    </option>
+                  ))
+                ) : (
+                  <option>Loading...</option>
+                )}
               </select>
             </div>
 
