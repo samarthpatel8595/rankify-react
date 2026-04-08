@@ -1,4 +1,4 @@
-import "chart.js/auto";
+import "chart.js/auto";        
 import { Eye, Search, Sparkles, Target, TrendingUp } from 'lucide-react'
 import React, { useMemo } from 'react'
 import { ChartData, ChartOptions } from "chart.js";
@@ -6,6 +6,8 @@ import { Scatter } from 'react-chartjs-2'
 import Button from '@/components/common/Button';
 import InputField from '@/components/common/InputField';
 import { usePathname } from "next/navigation";
+import { Nothing_You_Could_Do, Noto_Naskh_Arabic } from "next/font/google";
+import { getWaitUntilPromiseFromEvent } from "next/dist/server/web/spec-extension/fetch-event";
 
 const KeywordResearch = () => {
 

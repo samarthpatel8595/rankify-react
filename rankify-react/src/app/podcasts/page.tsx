@@ -9,9 +9,29 @@ export default function TextToPodcastPage() {
   const [audioUrl, setAudioUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleGenerate = async () => {
+  // ✅ DOWNLOAD FUNCTION (BEST METHOD)
+  const downloadAudio = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
 
-    // ✅ FIX: prevent empty input
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "podcast.mp3";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.log("Download failed", err);
+    }
+  };
+
+  const handleGenerate = async () => {
     if (!text.trim()) {
       alert("Please enter some text!");
       return;
@@ -29,12 +49,19 @@ export default function TextToPodcastPage() {
         temperature: 0.7,
       });
 
+      let finalUrl = "";
+
       if (res?.audio_url) {
-        setAudioUrl(res.audio_url);
+        finalUrl = res.audio_url;
       } else if (res?.audioId) {
-        setAudioUrl(
-          `https://podcastapi.aicerts.ai/audio/${res.audioId}`
-        );
+        finalUrl = `https://podcastapi.aicerts.ai/audio/${res.audioId}`;
+      }
+
+      if (finalUrl) {
+        setAudioUrl(finalUrl);
+
+        // ✅ AUTO DOWNLOAD
+        await downloadAudio(finalUrl);
       }
     } catch (error) {
       console.log(error);
@@ -60,10 +87,10 @@ export default function TextToPodcastPage() {
       {/* ✅ MAIN UI */}
       <div className="p-3 sm:p-4 md:p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
-            
+
             <div>
               <h1 className="text-base sm:text-lg font-semibold text-[#111827]">
                 Text to Podcast
@@ -95,7 +122,7 @@ export default function TextToPodcastPage() {
               {loading ? "Generating..." : "✨ Generate Podcast Audio"}
             </button>
 
-            {/* ✅ AUDIO */}
+            {/* ✅ AUDIO PLAYER */}
             {audioUrl && (
               <audio controls className="mt-4 w-full">
                 <source src={audioUrl} />
@@ -105,15 +132,17 @@ export default function TextToPodcastPage() {
 
           {/* RIGHT SIDE */}
           <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-4 sm:p-5 space-y-4 sm:space-y-5">
-            
+
             <div className="text-sm font-medium">⚙ Configuration</div>
 
             <div>
               <label className="text-xs text-[#6B7280]">
                 Gemini Text Model
               </label>
-              <select className="w-full mt-1 border rounded-lg px-3 py-2 text-sm">
+              <select className="w-full mt-1  border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
                 <option>gemini-3-pro-preview</option>
+                <option>ChatGpt</option>
+                <option>Directorai</option>
               </select>
             </div>
 
@@ -121,8 +150,10 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Gemini TTS Model
               </label>
-              <select className="w-full mt-1 border rounded-lg px-3 py-2 text-sm">
+              <select className="w-full mt-1  border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
                 <option>gemini-2.5-flash-preview-tts</option>
+                <option>ChatGpt</option>
+                <option>Directorai</option>
               </select>
             </div>
 
@@ -139,8 +170,9 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Speaker 1 Voice
               </label>
-              <select className="w-full mt-1 border rounded-lg px-3 py-2 text-sm">
+              <select className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
                 <option>achernar</option>
+                <option>enceladus</option>
               </select>
             </div>
 
@@ -148,8 +180,9 @@ export default function TextToPodcastPage() {
               <label className="text-xs text-[#6B7280]">
                 Speaker 2 Voice
               </label>
-              <select className="w-full mt-1 border rounded-lg px-3 py-2 text-sm">
+              <select className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
                 <option>enceladus</option>
+                <option>achernar</option>
               </select>
             </div>
 

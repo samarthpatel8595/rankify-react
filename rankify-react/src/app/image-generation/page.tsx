@@ -1,7 +1,9 @@
-"use client";
+"use client"; 
 
 import { useState } from "react";
 import { generateImages } from "@/services/image";
+import { toUSVString } from "util";
+import { GitGraph } from "lucide-react";
 
 export default function ImageGenerationPage() {
 
