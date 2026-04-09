@@ -14,10 +14,10 @@ export default function CreateEventPage() {
     eventType: "",
     eventSummary: "",
     zoomId: "",
-    startDate: "",
-    endDate: "",
-    startTime: "",
-    endTime: "",
+    startdate: "",
+    enddate: "",
+    starttime: "",
+    endtime: "",
     eventLink: "",
     duration: "",
     jobTitles: [] as string[],
@@ -163,7 +163,7 @@ export default function CreateEventPage() {
                 <input
                   type={item.includes("Time") ? "time" : "date"}
                   name={key}
-                  value={formData[key]}
+                  value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
                 />
