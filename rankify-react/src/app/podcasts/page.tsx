@@ -8,10 +8,10 @@ export default function TextToPodcastPage() {
   const [text, setText] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState(0.7);
+
 
   const handleGenerate = async () => {
-
-    // ✅ FIX: prevent empty input
     if (!text.trim()) {
       alert("Please enter some text!");
       return;
@@ -32,9 +32,7 @@ export default function TextToPodcastPage() {
       if (res?.audio_url) {
         setAudioUrl(res.audio_url);
       } else if (res?.audioId) {
-        setAudioUrl(
-          `https://podcastapi.aicerts.ai/audio/${res.audioId}`
-        );
+        setAudioUrl(`https://podcastapi.aicerts.ai/audio/${res.audioId}`);
       }
     } catch (error) {
       console.log(error);
@@ -45,6 +43,31 @@ export default function TextToPodcastPage() {
 
   return (
     <>
+      {/* ✅ HEADER */}
+      <div className="px-4 sm:px-6 pt-4 pb-2">
+        <div className="flex items-center gap-3">
+          
+          {/* 🎧 EXACT SVG FROM YOUR LINK */}
+          <div className="w-10 h-10 flex items-center justify-center bg-[#FFF7E6] rounded-lg">
+            <img
+              src="https://app.rankify365.ai/icons/podcast-icon-gold.svg"
+              alt="podcast"
+              className="w-5 h-5"
+            />
+          </div>
+
+          {/* TEXT */}
+          <div>
+            <h1 className="text-base sm:text-lg font-semibold text-[#111827]">
+              Text → Podcast → Multi-Speaker Audio
+            </h1>
+            <p className="text-xs sm:text-sm text-[#6B7280]">
+              Convert your content into conversational podcasts with AI-generated voices.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ✅ LOADER */}
       {loading && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
@@ -60,24 +83,15 @@ export default function TextToPodcastPage() {
       {/* ✅ MAIN UI */}
       <div className="p-3 sm:p-4 md:p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* LEFT SIDE */}
           <div className="lg:col-span-2 bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
-            
+
             <div>
-              <h1 className="text-base sm:text-lg font-semibold text-[#111827]">
-                Text to Podcast
-              </h1>
-
-              <p className="text-xs sm:text-sm text-[#6B7280] mt-1">
-                Convert your text into AI-generated podcast audio.
-              </p>
-
-              <div className="mt-4 mb-2 text-sm font-medium">
+              <div className="mt-2 mb-2 text-sm font-medium">
                 ✨ Input Content
               </div>
 
-              {/* ✅ TEXTAREA */}
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -86,7 +100,6 @@ export default function TextToPodcastPage() {
               />
             </div>
 
-            {/* ✅ BUTTON */}
             <button
               onClick={handleGenerate}
               disabled={loading}
@@ -95,7 +108,6 @@ export default function TextToPodcastPage() {
               {loading ? "Generating..." : "✨ Generate Podcast Audio"}
             </button>
 
-            {/* ✅ AUDIO */}
             {audioUrl && (
               <audio controls className="mt-4 w-full">
                 <source src={audioUrl} />
@@ -103,10 +115,23 @@ export default function TextToPodcastPage() {
             )}
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT SIDE CONFIG */}
           <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-4 sm:p-5 space-y-4 sm:space-y-5">
-            
-            <div className="text-sm font-medium">⚙ Configuration</div>
+
+            {/* ⚙ CONFIG HEADER */}
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M4 6H14" stroke="#CFA935" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="18" cy="6" r="2" fill="#CFA935"/>
+
+                <path d="M4 12H10" stroke="#CFA935" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="14" cy="12" r="2" fill="#CFA935"/>
+
+                <path d="M4 18H18" stroke="#CFA935" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="8" cy="18" r="2" fill="#CFA935"/>
+              </svg>
+              Configuration
+            </div>
 
             <div>
               <label className="text-xs text-[#6B7280]">
@@ -127,13 +152,27 @@ export default function TextToPodcastPage() {
             </div>
 
             <div>
-              <label className="text-xs text-[#6B7280]">
-                Creativity
-              </label>
-              <input type="range" className="w-full mt-2" />
-            </div>
+      {/* TOP LABEL + VALUE */}
+      <div className="flex justify-between items-center">
+        <label className="text-xs text-[#6B7280]">
+          Creativity
+        </label>
+        <span className="text-xs text-[#6B7280]">
+          {value.toFixed(1)} (0-1)
+        </span>
+      </div>
 
-            <div className="w-full h-[2px] bg-[#E5E7EB]"></div>
+      {/* SLIDER */}
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.1"
+        value={value}
+        onChange={(e) => setValue(parseFloat(e.target.value))}
+        className="w-full mt-2 accent-[#CFA935] cursor-pointer"
+      />
+    </div>
 
             <div>
               <label className="text-xs text-[#6B7280]">

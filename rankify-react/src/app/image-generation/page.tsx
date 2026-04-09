@@ -5,9 +5,9 @@ import { generateImages } from "@/services/image";
 
 export default function ImageGenerationPage() {
 
-  // ✅ STATES
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [logo, setLogo] = useState<File | null>(null);
 
   const [form, setForm] = useState({
     title: "Future-Proof Your Career with AI CERTs®",
@@ -19,15 +19,16 @@ export default function ImageGenerationPage() {
     resolution: "",
   });
 
-  // ✅ HANDLE INPUT
   const handleChange = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  // ✅ GENERATE IMAGES
+  const handleLogoUpload = (file: File) => {
+    setLogo(file);
+  };
+
   const handleGenerate = async () => {
 
-    // 🔥 VALIDATION
     if (!form.title.trim() || !form.subtitle.trim() || !form.body.trim()) {
       alert("Please fill Title, Subtitle and Body");
       return;
@@ -35,11 +36,8 @@ export default function ImageGenerationPage() {
 
     try {
       setLoading(true);
-
-      // 🔥 CLEAR OLD IMAGES
       setImages([]);
 
-      // 🔥 PROMPT BUILD
       const prompt = `
 Create a UNIQUE and HIGH-QUALITY marketing poster.
 
@@ -69,10 +67,9 @@ Design Style:
         num_images: form.num_images,
         aspect_ratio: form.aspect_ratio,
         resolution: form.resolution,
-        seed: Date.now(), // 🔥 force new image
+        seed: Date.now(),
+        logo,
       });
-
-      console.log("IMAGE API:", res);
 
       if (res?.images) {
         setImages(res.images);
@@ -87,7 +84,7 @@ Design Style:
 
   return (
     <>
-      {/* ✅ LOADER */}
+      {/* LOADER */}
       {loading && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white px-6 py-5 rounded-xl shadow-lg text-center">
@@ -105,11 +102,10 @@ Design Style:
             Image Generation
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">
-            Create AI-powered marketing posters instantly.
+            Create high-quality marketing visuals using AI-Powered automative.
           </p>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* LEFT */}
@@ -121,7 +117,6 @@ Design Style:
                 Post Content (STRICT FORMAT)
               </h2>
 
-              {/* TITLE */}
               <label className="text-xs text-[#6B7280]">TITLE:</label>
               <input
                 value={form.title}
@@ -129,7 +124,6 @@ Design Style:
                 className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
               />
 
-              {/* SUBTITLE */}
               <label className="text-xs text-[#6B7280]">SUBTITLE:</label>
               <input
                 value={form.subtitle}
@@ -137,7 +131,6 @@ Design Style:
                 className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
               />
 
-              {/* BODY */}
               <label className="text-xs text-[#6B7280]">BODY:</label>
               <textarea
                 value={form.body}
@@ -145,7 +138,6 @@ Design Style:
                 className="w-full h-32 mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
               />
 
-              {/* CTA */}
               <label className="text-xs text-[#6B7280]">CTA BUTTON:</label>
               <input
                 value={form.cta}
@@ -154,7 +146,6 @@ Design Style:
               />
             </div>
 
-            {/* BUTTON */}
             <button
               onClick={handleGenerate}
               disabled={loading}
@@ -163,7 +154,6 @@ Design Style:
               {loading ? "Generating..." : "✨ Generate Images"}
             </button>
 
-            {/* ✅ IMAGE OUTPUT */}
             {images.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {images.map((img, i) => (
@@ -186,13 +176,11 @@ Design Style:
               ✨ Configuration
             </h2>
 
-            {/* MODEL */}
             <label className="text-xs text-[#6B7280]">Gemini Model</label>
             <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
               <option>Gemini 3 Pro Image Premium Gener</option>
             </select>
 
-            {/* NUMBER */}
             <label className="text-xs text-[#6B7280]">Number of Images</label>
             <div className="flex items-center gap-2 mt-1 mb-4">
               <button
@@ -200,9 +188,7 @@ Design Style:
                   handleChange("num_images", Math.max(1, form.num_images - 1))
                 }
                 className="w-8 h-8 border border-[#E5E7EB] rounded-md"
-              >
-                -
-              </button>
+              >-</button>
 
               <input
                 value={form.num_images}
@@ -215,17 +201,12 @@ Design Style:
                   handleChange("num_images", form.num_images + 1)
                 }
                 className="w-8 h-8 border border-[#E5E7EB] rounded-md"
-              >
-                +
-              </button>
+              >+</button>
             </div>
 
-            {/* ASPECT */}
             <label className="text-xs text-[#6B7280]">Aspect Ratio</label>
             <select
-              onChange={(e) =>
-                handleChange("aspect_ratio", e.target.value)
-              }
+              onChange={(e) => handleChange("aspect_ratio", e.target.value)}
               className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
             >
               <option value=""></option>
@@ -233,18 +214,69 @@ Design Style:
               <option value="16:9">16:9</option>
             </select>
 
-            {/* RESOLUTION */}
             <label className="text-xs text-[#6B7280]">Image Resolution</label>
             <select
-              onChange={(e) =>
-                handleChange("resolution", e.target.value)
-              }
+              onChange={(e) => handleChange("resolution", e.target.value)}
               className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
             >
               <option value=""></option>
               <option value="512">512</option>
               <option value="1024">1024</option>
             </select>
+
+            {/* ✅ UPLOAD LOGO (FINAL UI) */}
+            <label className="text-xs text-[#6B7280]">Upload Logo (Optional)</label>
+
+            <div
+              className="mt-2 border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files[0]) {
+                  handleLogoUpload(e.dataTransfer.files[0]);
+                }
+              }}
+            >
+              <p className="text-sm text-[#6B7280]">
+                Drag and drop file here
+              </p>
+              <p className="text-xs text-[#9CA3AF] mt-1">
+                Limit 200MB per file • PNG, JPG
+              </p>
+            </div>
+
+            <button
+              onClick={() => document.getElementById("logoInput")?.click()}
+              className="w-full mt-3 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg py-2 text-sm text-[#374151] hover:bg-gray-200"
+            >
+              Browse files
+            </button>
+
+            <input
+              id="logoInput"
+              type="file"
+              accept="image/png, image/jpeg"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  handleLogoUpload(e.target.files[0]);
+                }
+              }}
+            />
+
+            {logo && (
+              <div className="mt-3">
+                <p className="text-xs text-[#6B7280] mb-1">Preview:</p>
+                <img
+                  src={URL.createObjectURL(logo)}
+                  alt="logo"
+                  className="w-24 h-24 object-contain border rounded-md"
+                />
+                <p className="text-xs mt-2 text-[#6B7280]">
+                  {logo.name}
+                </p>
+              </div>
+            )}
 
           </div>
         </div>
