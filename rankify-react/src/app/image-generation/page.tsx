@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { generateImages } from "@/services/image";
-import { toUSVString } from "util";
-import { GitGraph } from "lucide-react";
 
-export default function ImageGenerationPage() {
+export default function ImageGenerationPage() {      
 
   // ✅ STATES
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
   const [images, setImages] = useState<string[]>([]);
 
   const [form, setForm] = useState({
@@ -26,10 +23,9 @@ export default function ImageGenerationPage() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  // ✅ GENERATE IMAGES
+  // ✅ GENERATE (NO API - UI ONLY)
   const handleGenerate = async () => {
 
-    // 🔥 VALIDATION
     if (!form.title.trim() || !form.subtitle.trim() || !form.body.trim()) {
       alert("Please fill Title, Subtitle and Body");
       return;
@@ -41,48 +37,19 @@ export default function ImageGenerationPage() {
       // 🔥 CLEAR OLD IMAGES
       setImages([]);
 
-      // 🔥 PROMPT BUILD
-      const prompt = `
-Create a UNIQUE and HIGH-QUALITY marketing poster.
+      // 🔥 SIMULATE LOADING
+      setTimeout(() => {
+        // dummy images (UI test ke liye)
+        const dummyImages = Array(form.num_images).fill(
+          "https://via.placeholder.com/500x500?text=Generated+Image"
+        );
 
-TEXT CONTENT (must be visible exactly):
-- Title: "${form.title}"
-- Subtitle: "${form.subtitle}"
-- Body: "${form.body}"
-- CTA Button: "${form.cta}"
-
-STRICT RULES:
-- Use EXACT text given above
-- Do NOT generate random/default text
-- Clean modern layout
-- Proper spacing and alignment
-
-Design Style:
-- modern UI
-- futuristic AI theme
-- glowing elements
-- premium look
-- high contrast
-- sharp typography
-`;
-
-      const res = await generateImages({
-        prompt,
-        num_images: form.num_images,
-        aspect_ratio: form.aspect_ratio,
-        resolution: form.resolution,
-        seed: Date.now(), // 🔥 force new image
-      });
-
-      console.log("IMAGE API:", res);
-
-      if (res?.images) {
-        setImages(res.images);
-      }
+        setImages(dummyImages);
+        setLoading(false);
+      }, 1500);
 
     } catch (err) {
       console.log(err);
-    } finally {
       setLoading(false);
     }
   };

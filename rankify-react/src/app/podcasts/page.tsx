@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import LayoutShell from "@/components/common/LayoutShell";
-import { generatePodcast, fetchModels } from "@/services/podcasts";
+import { generatePodcast, fetchModels } from "@/services/podcasts"; 
 import { fetchVoices } from "@/services/podcasts";
 
 export default function TextToPodcastPage() {
@@ -21,7 +21,7 @@ export default function TextToPodcastPage() {
   const [voices, setVoices] = useState<any[]>([]);
   const [speaker1, setSpeaker1] = useState("achernar");
   const [speaker2, setSpeaker2] = useState("enceladus");
-
+const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
   // ✅ USE CORRECT FUNCTION
   useEffect(() => {
     const loadModels = async () => {
@@ -67,42 +67,48 @@ export default function TextToPodcastPage() {
     }
   };
 
-  const handleGenerate = async () => {
-    if (!text.trim()) {
-      alert("Please enter some text!");
-      return;
+ const handleGenerate = async () => {
+  if (!text.trim()) {
+    alert("Please enter some text!");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const res = await generatePodcast({
+      input_text: text,
+      speaker_voices: [speaker1, speaker2],
+      num_speakers: 2,
+      tts_model: selectedTTS,
+      text_model: selectedTextModel,
+      temperature: 0.7,
+    });
+
+    console.log("API RESPONSE 👉", res);
+
+    let finalUrl = "";
+
+    // ✅ handle both cases
+    if (res?.audio_url) {
+      finalUrl = res.audio_url;
+    } else if (res?.audioId) {
+      finalUrl = `${podcastEndPoint}/audio/${res.audioId}`;
     }
 
-    try {
-      setLoading(true);
-
-      const res = await generatePodcast({
-        input_text: text,
-        speaker_voices: [speaker1, speaker2],
-        num_speakers: 2,
-        tts_model: selectedTTS,
-        text_model: selectedTextModel,
-        temperature: 0.7,
-      });
-
-      let finalUrl = "";
-
-      if (res?.audio_url) {
-        finalUrl = res.audio_url;
-      } else if (res?.audioId) {
-        finalUrl = `https://podcastapi.aicerts.ai/audio/${res.audioId}`;
-      }
-
-      if (finalUrl) {
-        setAudioUrl(finalUrl);
-        await downloadAudio(finalUrl);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+    if (finalUrl) {
+      setAudioUrl(finalUrl);
+      await downloadAudio(finalUrl);
+    } else {
+      alert("Audio not generated");
     }
-  };
+
+  } catch (error) {
+    alert("Podcast generation failed ❌");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>

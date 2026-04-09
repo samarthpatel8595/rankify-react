@@ -13,47 +13,50 @@ export type PodcastResponse = {
   source?: string;
 };
 
+const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
+
 // ✅ GENERATE PODCAST
-export const generatePodcast = async (
-  data: PodcastRequest
-): Promise<PodcastResponse> => {
+export const generatePodcast = async (data: PodcastRequest) => {
   try {
-    const res = await fetch(
-      "https://podcastapi.aicerts.ai/generate-podcast",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "AICERTS@123",
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    console.log("📤 PAYLOAD:", data);
 
-    const result = await res.json();
+    const res = await fetch(`${podcastEndPoint}/generate-podcast`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "AICERTS@123",
+      },
+      body: JSON.stringify(data),
+    });
 
-    if (!res.ok) {
-      throw new Error(result?.message || "API failed");
+    const textResponse = await res.text();
+
+    let result;
+    try {
+      result = JSON.parse(textResponse);
+    } catch {
+      console.log("❌ RAW RESPONSE:", textResponse);
+      throw new Error("Invalid JSON response from API");
     }
 
-    return {
-      ...result,
-      source: "real-api",
-    };
-  } catch (error) {
-    console.log("❌ API FAIL → using fallback", error);
+    if (!res.ok) {
+      console.log("❌ STATUS:", res.status);
+      console.log("❌ ERROR RESPONSE:", result);
+      throw new Error(result?.message || "Podcast generation failed");
+    }
 
-    return {
-      audio_url:
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-      source: "fallback",
-    };
+    console.log("✅ SUCCESS:", result);
+
+    return result;
+
+  } catch (error) {
+    console.log("❌ Generate Podcast Error:", error);
+    throw error;
   }
 };
-
 export const fetchModels = async () => {
   try {
-    const res = await fetch("https://podcastapi.aicerts.ai/tts-models", {
+    const res = await fetch(`${podcastEndPoint}/tts-models`, {
       headers: {
         "x-api-key": "AICERTS@123",
       },
@@ -61,40 +64,17 @@ export const fetchModels = async () => {
 
     const data = await res.json();
 
-    console.log("TTS API RAW 👉", data);
-
-    return {
-      tts_models: Array.isArray(data) ? data : data?.tts_models || [],
-      text_models: [
-        {
-          id: "gemini-3-pro-preview",
-          name: "Gemini 3 Pro Preview",
-        },
-      ],
-    };
+    // ✅ assume API returns mixed models
+    return data;
 
   } catch (error) {
-    console.log("❌ Failed to fetch models", error);
-
-    return {
-      tts_models: [
-        {
-          id: "gemini-2.5-flash-preview-tts",
-          name: "Gemini 2.5 Flash TTS",
-        },
-      ],
-      text_models: [
-        {
-          id: "gemini-3-pro-preview",
-          name: "Gemini 3 Pro Preview",
-        },
-      ],
-    };
+    console.log("Failed to fetch models", error);
+    return [];
   }
 };
 export const fetchVoices = async () => {
   try {
-    const res = await fetch("https://podcastapi.aicerts.ai/voices", {
+    const res = await fetch(`${podcastEndPoint}/voices`, {
       headers: {
         "x-api-key": "AICERTS@123",
       },
