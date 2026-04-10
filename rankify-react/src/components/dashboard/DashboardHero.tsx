@@ -20,7 +20,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
   // Refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // Side effect handlers
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -47,6 +47,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
     };
   }, []);
 
+  // Fetch projects
   useEffect(() => {
     const fetchSources = async () => {
       try {
@@ -65,7 +66,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
     void fetchSources();
   }, [onSelectProject]);
 
-  // Prevent background scroll when project dropdown is open on small screens
+  // Prevent background scroll on mobile
   useEffect(() => {
     if (!isOpen) return;
     const mediaQuery = window.matchMedia("(max-width: 639px)");
@@ -77,9 +78,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
     };
   }, [isOpen]);
 
-  
-
-  // Custom Functions
+  // Select project
   const handleSelect = (project: SourceOption) => {
     setSelectedProject(project);
     if (onSelectProject) {
@@ -90,7 +89,10 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
 
   return (
     <section>
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* HEADER */}
+      <div className="flex flex-wrap items-center gap-4">
+
+        {/* LEFT TEXT */}
         <div>
           <p className="font-display text-lg font-semibold text-ink">
             Rankify AI Dashboard
@@ -99,58 +101,78 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
             Optimize content for AI-powered search engines.
           </p>
         </div>
-        <div className="relative" ref={dropdownRef}>
+
+        {/* RIGHT BUTTONS */}
+        <div className="flex items-center gap-3 ml-auto">
+
+          {/* FILTER BUTTON */}
+          <div className="relative" ref={dropdownRef}>
+            <Button
+              className="px-5 py-3 text-sm shadow-sm lg:w-auto"
+              iconPosition="right"
+              variant="secondary"
+              ariaLabel="Filter by project"
+              onClick={() => setIsOpen((prev) => !prev)}
+            >
+              <span className="inline-flex items-center gap-2">
+                <Funnel size={18} />
+                <span>{selectedProject?.label ?? "Select Project"}</span>
+              </span>
+            </Button>
+
+            {isOpen ? (
+              <div className="absolute right-0 mt-3 w-72 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl z-50">
+                <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <Funnel size={16} />
+                    <span>Filter by Project</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-full border border-slate-200 p-1 text-independence hover:bg-slate-100"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+
+                <div className="mt-3 flex max-h-64 flex-col gap-2 overflow-auto">
+                  {projects.map((project) => {
+                    const isSelected =
+                      project.source === selectedProject?.source;
+
+                    return (
+                      <button
+                        key={project.source}
+                        type="button"
+                        onClick={() => handleSelect(project)}
+                        className={`rounded-xl px-4 py-2 text-left text-sm ${
+                          isSelected
+                            ? "border border-sunray bg-floral text-ink shadow-sm"
+                            : "border border-transparent bg-anti-flash text-independence hover:border-sunray/50 hover:bg-sunray/5"
+                        }`}
+                      >
+                        {project.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {/* EXPORT BUTTON */}
           <Button
             className="px-5 py-3 text-sm shadow-sm lg:w-auto"
-            iconPosition="right"
             variant="secondary"
-            ariaLabel="Filter by project"
-            onClick={() => setIsOpen((prev) => !prev)}
           >
-            <span className="inline-flex items-center gap-2">
-              <Funnel size={18} />
-              <span>{selectedProject?.label ?? "Select Project"}</span>
-            </span>
+            Export
           </Button>
-          {isOpen ? (
-            <div className="fixed left-4 right-4 z-18 mt-3 w-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:absolute sm:left-auto sm:right-0 sm:mt-3 sm:w-72">
-              <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                  <Funnel size={16} />
-                  <span>Filter by Project</span>
-                </div>
-                <button
-                  type="button"
-                  className="rounded-full border border-slate-200 p-1 text-independence transition hover:bg-slate-100"
-                  onClick={() => setIsOpen(false)}
-                  aria-label="Close filter dropdown"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-              <div className="mt-3 flex max-h-64 flex-col gap-2 overflow-auto">
-                {projects.map((project) => {
-                  const isSelected = project.source === selectedProject?.source;
-                  return (
-                    <button
-                      key={project.source}
-                      type="button"
-                      onClick={() => handleSelect(project)}
-                      className={`rounded-xl px-4 py-2 cursor-pointer text-left text-sm transition ${
-                        isSelected
-                          ? "border border-sunray bg-floral text-ink shadow-sm"
-                          : "border border-transparent bg-anti-flash text-independence hover:border-sunray/50 hover:bg-sunray/5"
-                      }`}
-                    >
-                      {project.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
+
         </div>
       </div>
+
+      {/* SEARCH + UPLOAD */}
       <div className="mt-6 flex flex-col gap-4 lg:flex-row">
         <InputField
           wrapperClassName="flex-1 px-4 py-3"

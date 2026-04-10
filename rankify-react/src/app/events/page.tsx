@@ -70,7 +70,9 @@ export default function CreateEventPage() {
             Create New Event
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+Configure event details, audience filters and scheduling parameters.
+
+
           </p>
         </div>
 
