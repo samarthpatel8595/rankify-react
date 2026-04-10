@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react";
 import LayoutShell from "@/components/common/LayoutShell";
-import { generatePodcast, fetchModels } from "@/services/podcasts"; 
-import { fetchVoices } from "@/services/podcasts";
+import {
+  generatePodcast,
+  fetchModels,
+  waitForAudio,
+  fetchVoices,
+} from "@/services/podcasts";
 
 export default function TextToPodcastPage() {
   const [text, setText] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
+  const [downloading, setDownloading] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [ttsModels, setTtsModels] = useState<any[]>([]);
@@ -21,103 +25,151 @@ export default function TextToPodcastPage() {
   const [voices, setVoices] = useState<any[]>([]);
   const [speaker1, setSpeaker1] = useState("achernar");
   const [speaker2, setSpeaker2] = useState("enceladus");
-const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
-  // ✅ USE CORRECT FUNCTION
+
+  // ✅ LOAD MODELS
   useEffect(() => {
     const loadModels = async () => {
-      const data = await fetchModels();
+      try {
+        const data = await fetchModels();
+        console.log("MODELS RESPONSE:", data);
 
-      console.log("API DATA", data);
-
-      setTtsModels(data?.tts_models || []);
-      setTextModels(data?.text_models || []);
+        setTtsModels(data?.tts_models || []);
+        setTextModels(data?.text_models || []);
+      } catch (err) {
+        console.log("❌ Models fetch error:", err);
+      }
     };
 
     loadModels();
   }, []);
- useEffect(() => {
-  const loadVoices = async () => {
-    const data = await fetchVoices(); // ✅ service function use
 
-    console.log("VOICES 👉", data);
+  // ✅ LOAD VOICES
+  useEffect(() => {
+    const loadVoices = async () => {
+      try {
+        const data = await fetchVoices();
+        console.log(" VOICES RESPONSE:", data);
 
-    setVoices(data?.voices || []);
-  };
+        setVoices(data?.voices || []);
+      } catch (err) {
+        console.log("❌ Voices fetch error:", err);
+      }
+    };
 
-  loadVoices();
-}, []);
+    loadVoices();
+  }, []);
+
+  // ✅ DOWNLOAD AUDIO
   const downloadAudio = async (url: string) => {
     try {
-      const response = await fetch(url);
+      setDownloading(true);
+
+      console.log("⬇ Downloading from:", url);
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "x-api-key": "AICERTS@123",
+        },
+      });
+
+      console.log("📡 Download response status:", response.status);
+
+      if (!response.ok) {
+        throw new Error("Download failed");
+      }
+
       const blob = await response.blob();
+      console.log("Blob size:", blob.size);
 
-      const blobUrl = window.URL.createObjectURL(blob);
+      const file = new File([blob], "podcast.mp3", {
+        type: "audio/mpeg",
+      });
 
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = "podcast.mp3";
+      const blobUrl = window.URL.createObjectURL(file);
 
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = "podcast.mp3";
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
       window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.log("Download failed", err);
+
+      console.log(" Download completed");
+    } catch (err: any) {
+      console.log("❌ Download failed:", err);
+      alert(err.message);
+    } finally {
+      setDownloading(false);
     }
   };
 
- const handleGenerate = async () => {
-  if (!text.trim()) {
-    alert("Please enter some text!");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const res = await generatePodcast({
-      input_text: text,
-      speaker_voices: [speaker1, speaker2],
-      num_speakers: 2,
-      tts_model: selectedTTS,
-      text_model: selectedTextModel,
-      temperature: 0.7,
-    });
-
-    console.log("API RESPONSE 👉", res);
-
-    let finalUrl = "";
-
-    // ✅ handle both cases
-    if (res?.audio_url) {
-      finalUrl = res.audio_url;
-    } else if (res?.audioId) {
-      finalUrl = `${podcastEndPoint}/audio/${res.audioId}`;
+  // ✅ GENERATE PODCAST
+  const handleGenerate = async () => {
+    if (!text.trim()) {
+      alert("Please enter some text!");
+      return;
     }
 
-    if (finalUrl) {
-      setAudioUrl(finalUrl);
+    try {
+      setLoading(true);
+
+      console.log("Generating podcast...");
+
+      const res = await generatePodcast({
+        input_text: text,
+        speaker_voices: [speaker1, speaker2],
+        num_speakers: 2,
+        tts_model: selectedTTS,
+        text_model: selectedTextModel,
+        temperature: 0.7,
+      });
+
+      console.log("API RESPONSE:", res);
+
+      let finalUrl = "";
+
+      console.log("🔍 Checking response...");
+      console.log("audio_url 👉", res?.audio_url);
+      console.log("audioId 👉", res?.audioId);
+
+      if (res?.audio_url) {
+        finalUrl = res.audio_url;
+      } else if (res?.audioId) {
+        console.log("⏳ Waiting for audio...");
+        finalUrl = await waitForAudio(res.audioId);
+        console.log("✅ Audio ready:", finalUrl);
+      }
+
+      console.log("FINAL URL:", finalUrl);
+
+      if (!finalUrl) {
+        throw new Error("Audio URL not found");
+      }
+
+      // 🔥 increased delay (important)
+      await new Promise((r) => setTimeout(r, 2000));
+
       await downloadAudio(finalUrl);
-    } else {
-      alert("Audio not generated");
+    } catch (error: any) {
+      console.log("❌ ERROR:", error);
+      alert(error.message || "Podcast generation failed ❌");
+    } finally {
+      setLoading(false);
     }
-
-  } catch (error) {
-    alert("Podcast generation failed ❌");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <>
-      {loading && (
+      {(loading || downloading) && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
           <div className="bg-white px-6 py-5 rounded-xl shadow-lg text-center w-full max-w-sm">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#CFA935] mx-auto mb-3"></div>
             <p className="text-sm font-medium text-[#111827]">
-              Generating Podcast...
+              {loading ? "Generating Podcast..." : "Downloading Podcast..."}
             </p>
           </div>
         </div>
@@ -155,37 +207,26 @@ const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
             >
               {loading ? "Generating..." : "✨ Generate Podcast Audio"}
             </button>
-
-            {audioUrl && (
-              <audio controls className="mt-4 w-full">
-                <source src={audioUrl} />
-              </audio>
-            )}
           </div>
 
+          
           <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-4 sm:p-5 space-y-4 sm:space-y-5">
-
             <div className="text-sm font-medium">⚙ Configuration</div>
 
             <div>
               <label className="text-xs text-[#6B7280]">
                 Gemini Text Model
               </label>
-
               <select
                 value={selectedTextModel}
                 onChange={(e) => setSelectedTextModel(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB]"
               >
-                {textModels.length > 0 ? (
-                  textModels.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.name}
-                    </option>
-                  ))
-                ) : (
-                  <option>No models found</option>
-                )}
+                {textModels.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -196,17 +237,13 @@ const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
               <select
                 value={selectedTTS}
                 onChange={(e) => setSelectedTTS(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB]"
               >
-                {ttsModels.length > 0 ? (
-                  ttsModels.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.name}
-                    </option>
-                  ))
-                ) : (
-                  <option>Loading...</option>
-                )}
+                {ttsModels.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -226,17 +263,13 @@ const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
               <select
                 value={speaker1}
                 onChange={(e) => setSpeaker1(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB]"
               >
-                {voices.length > 0 ? (
-                  voices.map((voice) => (
-                    <option key={voice.id} value={voice.id}>
-                      {voice.name} ({voice.description})
-                    </option>
-                  ))
-                ) : (
-                  <option>Loading...</option>
-                )}
+                {voices.map((voice) => (
+                  <option key={voice.id} value={voice.id}>
+                    {voice.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -247,21 +280,17 @@ const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
               <select
                 value={speaker2}
                 onChange={(e) => setSpeaker2(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB]"
               >
-                {voices.length > 0 ? (
-                  voices.map((voice) => (
-                    <option key={voice.id} value={voice.id}>
-                      {voice.name}
-                    </option>
-                  ))
-                ) : (
-                  <option>Loading...</option>
-                )}
+                {voices.map((voice) => (
+                  <option key={voice.id} value={voice.id}>
+                    {voice.name}
+                  </option>
+                ))}
               </select>
             </div>
-
           </div>
+
         </div>
       </div>
     </>

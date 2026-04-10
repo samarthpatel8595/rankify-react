@@ -2,28 +2,35 @@
 
 import { useState } from "react";
 
-export default function ImageGenerationPage() {      
 
-  // ✅ STATES
-  const [loading, setLoading] = useState(false); 
+export default function ImageGenerationPage() {
+
+  const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [logo, setLogo] = useState<File | null>(null);
 
   const [form, setForm] = useState({
-    title: "Future-Proof Your Career with AI CERTs®",
-    subtitle: "Become Certified. Become AI-Ready.",
+    title: "",
+    subtitle: "",
     body: "",
-    cta: "Start Now",
+    cta: "",
     num_images: 1,
     aspect_ratio: "",
     resolution: "",
+    gemini_model: "",
   });
 
-  // ✅ HANDLE INPUT
+  const content = [
+    form.title,
+    form.subtitle,
+    form.body,
+    form.cta,
+  ];
+
   const handleChange = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  // ✅ GENERATE (NO API - UI ONLY)
   const handleGenerate = async () => {
 
     if (!form.title.trim() || !form.subtitle.trim() || !form.body.trim()) {
@@ -33,30 +40,39 @@ export default function ImageGenerationPage() {
 
     try {
       setLoading(true);
-
-      // 🔥 CLEAR OLD IMAGES
       setImages([]);
 
-      // 🔥 SIMULATE LOADING
-      setTimeout(() => {
-        // dummy images (UI test ke liye)
-        const dummyImages = Array(form.num_images).fill(
-          "https://via.placeholder.com/500x500?text=Generated+Image"
-        );
+      const payload = {
+        content: content,
+        num_images: form.num_images,
+        aspect_ratio: form.aspect_ratio,
+        image_size: form.resolution,
+        gemini_model: form.gemini_model || "gemini-3-pro-preview",
+        logo: logo ? {
+          name: logo.name,
+          type: logo.type,
+          size: logo.size,
+        } : null,
+      };
 
-        setImages(dummyImages);
-        setLoading(false);
-      }, 1500);
+      console.log("📤 REQUEST PAYLOAD:", payload);
+
+      await new Promise((res) => setTimeout(res, 1500));
 
     } catch (err) {
-      console.log(err);
+      console.log("❌ ERROR:", err);
+    } finally {
       setLoading(false);
     }
   };
 
+  const handleLogoUpload = (file: File) => {
+    setLogo(file);
+  };
+
   return (
     <>
-      {/* ✅ LOADER */}
+      {/* LOADER */}
       {loading && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white px-6 py-5 rounded-xl shadow-lg text-center">
@@ -74,11 +90,10 @@ export default function ImageGenerationPage() {
             Image Generation
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">
-            Create AI-powered marketing posters instantly.
+            Create high-quality marketing visuals using AI-Powered automative
           </p>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* LEFT */}
@@ -90,7 +105,6 @@ export default function ImageGenerationPage() {
                 Post Content (STRICT FORMAT)
               </h2>
 
-              {/* TITLE */}
               <label className="text-xs text-[#6B7280]">TITLE:</label>
               <input
                 value={form.title}
@@ -98,7 +112,6 @@ export default function ImageGenerationPage() {
                 className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
               />
 
-              {/* SUBTITLE */}
               <label className="text-xs text-[#6B7280]">SUBTITLE:</label>
               <input
                 value={form.subtitle}
@@ -106,7 +119,6 @@ export default function ImageGenerationPage() {
                 className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
               />
 
-              {/* BODY */}
               <label className="text-xs text-[#6B7280]">BODY:</label>
               <textarea
                 value={form.body}
@@ -114,7 +126,6 @@ export default function ImageGenerationPage() {
                 className="w-full h-32 mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
               />
 
-              {/* CTA */}
               <label className="text-xs text-[#6B7280]">CTA BUTTON:</label>
               <input
                 value={form.cta}
@@ -123,7 +134,6 @@ export default function ImageGenerationPage() {
               />
             </div>
 
-            {/* BUTTON */}
             <button
               onClick={handleGenerate}
               disabled={loading}
@@ -132,7 +142,6 @@ export default function ImageGenerationPage() {
               {loading ? "Generating..." : "✨ Generate Images"}
             </button>
 
-            {/* ✅ IMAGE OUTPUT */}
             {images.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {images.map((img, i) => (
@@ -155,9 +164,12 @@ export default function ImageGenerationPage() {
               ✨ Configuration
             </h2>
 
-            {/* MODEL */}
+            {/* GEMINI */}
             <label className="text-xs text-[#6B7280]">Gemini Model</label>
-            <select className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm">
+            <select
+              onChange={(e) => handleChange("gemini_model", e.target.value)}
+              className="w-full mt-1 mb-4 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB] appearance-none bg-white hover:bg-gray-100"
+            >
               <option>Gemini 3 Pro Image Premium Gener</option>
             </select>
 
@@ -169,9 +181,7 @@ export default function ImageGenerationPage() {
                   handleChange("num_images", Math.max(1, form.num_images - 1))
                 }
                 className="w-8 h-8 border border-[#E5E7EB] rounded-md"
-              >
-                -
-              </button>
+              >-</button>
 
               <input
                 value={form.num_images}
@@ -184,20 +194,15 @@ export default function ImageGenerationPage() {
                   handleChange("num_images", form.num_images + 1)
                 }
                 className="w-8 h-8 border border-[#E5E7EB] rounded-md"
-              >
-                +
-              </button>
+              >+</button>
             </div>
 
             {/* ASPECT */}
             <label className="text-xs text-[#6B7280]">Aspect Ratio</label>
             <select
-              onChange={(e) =>
-                handleChange("aspect_ratio", e.target.value)
-              }
-              className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              onChange={(e) => handleChange("aspect_ratio", e.target.value)}
+              className="w-full mt-1 mb-4 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB] appearance-none bg-white hover:bg-gray-100"
             >
-              <option value=""></option>
               <option value="1:1">1:1</option>
               <option value="16:9">16:9</option>
             </select>
@@ -205,15 +210,66 @@ export default function ImageGenerationPage() {
             {/* RESOLUTION */}
             <label className="text-xs text-[#6B7280]">Image Resolution</label>
             <select
-              onChange={(e) =>
-                handleChange("resolution", e.target.value)
-              }
-              className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              onChange={(e) => handleChange("resolution", e.target.value)}
+              className="w-full mt-1 mb-4 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB] appearance-none bg-white hover:bg-gray-100"
             >
-              <option value=""></option>
               <option value="512">512</option>
               <option value="1024">1024</option>
             </select>
+
+            {/* UPLOAD */}
+            <label className="text-xs text-[#6B7280]">Upload Logo (Optional)</label>
+
+            <div
+              className="mt-2 border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files[0]) {
+                  handleLogoUpload(e.dataTransfer.files[0]);
+                }
+              }}
+            >
+              <p className="text-sm text-[#6B7280]">
+                Drag and drop file here
+              </p>
+              <p className="text-xs text-[#9CA3AF] mt-1">
+                Limit 200MB per file • PNG, JPG
+              </p>
+            </div>
+
+            <button
+              onClick={() => document.getElementById("logoInput")?.click()}
+              className="w-full mt-3 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg py-2 text-sm text-[#374151] hover:bg-gray-200"
+            >
+              Browse files
+            </button>
+
+            <input
+              id="logoInput"
+              type="file"
+              accept="image/png, image/jpeg"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  handleLogoUpload(e.target.files[0]);
+                }
+              }}
+            />
+
+            {logo && (
+              <div className="mt-3">
+                <p className="text-xs text-[#6B7280] mb-1">Preview:</p>
+                <img
+                  src={URL.createObjectURL(logo)}
+                  alt="logo"
+                  className="w-24 h-24 object-contain border rounded-md"
+                />
+                <p className="text-xs mt-2 text-[#6B7280]">
+                  {logo.name}
+                </p>
+              </div>
+            )}
 
           </div>
         </div>

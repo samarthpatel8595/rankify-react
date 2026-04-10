@@ -13,7 +13,7 @@ export type PodcastResponse = {
   source?: string;
 };
 
-const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
+const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL;
 
 // ✅ GENERATE PODCAST
 export const generatePodcast = async (data: PodcastRequest) => {
@@ -29,31 +29,56 @@ export const generatePodcast = async (data: PodcastRequest) => {
       body: JSON.stringify(data),
     });
 
-    const textResponse = await res.text();
-
-    let result;
-    try {
-      result = JSON.parse(textResponse);
-    } catch {
-      console.log("❌ RAW RESPONSE:", textResponse);
-      throw new Error("Invalid JSON response from API");
-    }
+    const result = await res.json();
 
     if (!res.ok) {
-      console.log("❌ STATUS:", res.status);
       console.log("❌ ERROR RESPONSE:", result);
       throw new Error(result?.message || "Podcast generation failed");
     }
 
     console.log("✅ SUCCESS:", result);
-
     return result;
-
   } catch (error) {
     console.log("❌ Generate Podcast Error:", error);
     throw error;
   }
 };
+
+// ✅ WAIT FOR AUDIO READY (IMPROVED)
+export const waitForAudio = async (audioId: string) => {
+  let attempts = 0;
+
+  while (attempts < 20) {
+    try {
+      console.log(`⏳ Checking audio... ${attempts + 1}`);
+
+      const res = await fetch(`${podcastEndPoint}/audio/${audioId}`, {
+        method: "GET",
+        headers: {
+          "x-api-key": "AICERTS@123",
+        },
+      });
+
+      // 🔥 IMPORTANT: check content-type
+      const contentType = res.headers.get("content-type");
+
+      if (res.ok && contentType?.includes("audio")) {
+        console.log("✅ Audio ready!");
+        return `${podcastEndPoint}/audio/${audioId}`;
+      }
+
+    } catch (err) {
+      console.log("Waiting...");
+    }
+
+    await new Promise((r) => setTimeout(r, 2000));
+    attempts++;
+  }
+
+  throw new Error("Audio not ready, try again");
+};
+
+// ✅ MODELS
 export const fetchModels = async () => {
   try {
     const res = await fetch(`${podcastEndPoint}/tts-models`, {
@@ -62,16 +87,14 @@ export const fetchModels = async () => {
       },
     });
 
-    const data = await res.json();
-
-    // ✅ assume API returns mixed models
-    return data;
-
+    return await res.json();
   } catch (error) {
     console.log("Failed to fetch models", error);
     return [];
   }
 };
+
+// ✅ VOICES
 export const fetchVoices = async () => {
   try {
     const res = await fetch(`${podcastEndPoint}/voices`, {
