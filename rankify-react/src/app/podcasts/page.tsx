@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 import LayoutShell from "@/components/common/LayoutShell";
-import { generatePodcast, fetchModels } from "@/services/podcasts"; 
+import { generatePodcast, fetchModels } from "@/services/podcasts";
 import { fetchVoices } from "@/services/podcasts";
 
 export default function TextToPodcastPage() {
   const [text, setText] = useState("");
-  const [audioUrl, setAudioUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [ttsModels, setTtsModels] = useState<any[]>([]);
@@ -21,94 +20,74 @@ export default function TextToPodcastPage() {
   const [voices, setVoices] = useState<any[]>([]);
   const [speaker1, setSpeaker1] = useState("achernar");
   const [speaker2, setSpeaker2] = useState("enceladus");
-const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
-  // ✅ USE CORRECT FUNCTION
+  const [creativity, setCreativity] = useState(3);
+  const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
+  const [openTTS, setOpenTTS] = useState(false);
+  const [openText, setOpenText] = useState(false);
+
   useEffect(() => {
     const loadModels = async () => {
       const data = await fetchModels();
-
-      console.log("API DATA", data);
-
       setTtsModels(data?.tts_models || []);
       setTextModels(data?.text_models || []);
     };
-
     loadModels();
   }, []);
- useEffect(() => {
-  const loadVoices = async () => {
-    const data = await fetchVoices(); // ✅ service function use
 
-    console.log("VOICES 👉", data);
+  useEffect(() => {
+    const loadVoices = async () => {
+      const data = await fetchVoices();
+      setVoices(data?.voices || []);
+    };
+    loadVoices();
+  }, []);
 
-    setVoices(data?.voices || []);
+  const downloadAudio = (url: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank"; // important
+    link.rel = "noopener noreferrer";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  loadVoices();
-}, []);
-  const downloadAudio = async (url: string) => {
+  const handleGenerate = async () => {
+    if (!text.trim()) {
+      alert("Please enter some text!");
+      return;
+    }
+
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
+      setLoading(true);
 
-      const blobUrl = window.URL.createObjectURL(blob);
+      const res = await generatePodcast({
+        input_text: text,
+        speaker_voices: [speaker1, speaker2],
+        num_speakers: 2,
+        tts_model: selectedTTS,
+        text_model: selectedTextModel,
+        temperature: 0.7,
+      });
 
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = "podcast.mp3";
+      console.log("API RESPONSE 👉", res);
 
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // ✅ IMPORTANT: direct audio_url use karo
+      if (res?.audio_url) {
+        downloadAudio(res.audio_url);
+      }
+      else {
+        alert("Audio not generated");
+      }
 
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      console.log("Download failed", err);
+    } catch (error) {
+      alert("Podcast generation failed ❌");
+    } finally {
+      setLoading(false);
     }
   };
-
- const handleGenerate = async () => {
-  if (!text.trim()) {
-    alert("Please enter some text!");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    const res = await generatePodcast({
-      input_text: text,
-      speaker_voices: [speaker1, speaker2],
-      num_speakers: 2,
-      tts_model: selectedTTS,
-      text_model: selectedTextModel,
-      temperature: 0.7,
-    });
-
-    console.log("API RESPONSE 👉", res);
-
-    let finalUrl = "";
-
-    // ✅ handle both cases
-    if (res?.audio_url) {
-      finalUrl = res.audio_url;
-    } else if (res?.audioId) {
-      finalUrl = `${podcastEndPoint}/audio/${res.audioId}`;
-    }
-
-    if (finalUrl) {
-      setAudioUrl(finalUrl);
-      await downloadAudio(finalUrl);
-    } else {
-      alert("Audio not generated");
-    }
-
-  } catch (error) {
-    alert("Podcast generation failed ❌");
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <>
@@ -156,109 +135,216 @@ const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
               {loading ? "Generating..." : "✨ Generate Podcast Audio"}
             </button>
 
-            {audioUrl && (
-              <audio controls className="mt-4 w-full">
-                <source src={audioUrl} />
-              </audio>
-            )}
+            {/* ❌ No audio UI */}
           </div>
 
           <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-4 sm:p-5 space-y-4 sm:space-y-5">
 
             <div className="text-sm font-medium">⚙ Configuration</div>
 
-            <div>
+            <div className="relative">
               <label className="text-xs text-[#6B7280]">
                 Gemini Text Model
               </label>
 
-              <select
-                value={selectedTextModel}
-                onChange={(e) => setSelectedTextModel(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+              {/* Button */}
+              <button
+                onClick={() => setOpenText(!openText)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm flex justify-between items-center"
               >
-                {textModels.length > 0 ? (
-                  textModels.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.name}
-                    </option>
-                  ))
-                ) : (
-                  <option>No models found</option>
-                )}
-              </select>
+                <span>
+                  {textModels.find(m => m.id === selectedTextModel)?.name || "Select model"}
+                </span>
+
+                {/* Arrow */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${openText ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown List */}
+              {openText && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {textModels.length > 0 ? (
+                    textModels.map((model) => (
+                      <li
+                        key={model.id}
+                        onClick={() => {
+                          setSelectedTextModel(model.id);
+                          setOpenText(false);
+                        }}
+                        className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {model.name}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-2 py-1 text-gray-400">No models found</li>
+                  )}
+                </ul>
+              )}
             </div>
 
-            <div>
+            <div className="relative">
               <label className="text-xs text-[#6B7280]">
                 Gemini TTS Model
               </label>
-              <select
-                value={selectedTTS}
-                onChange={(e) => setSelectedTTS(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+
+              {/* Button */}
+              <button
+                onClick={() => setOpenTTS(!openTTS)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm flex justify-between items-center"
               >
-                {ttsModels.length > 0 ? (
-                  ttsModels.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.name}
-                    </option>
-                  ))
-                ) : (
-                  <option>Loading...</option>
-                )}
-              </select>
+                <span>
+                  {ttsModels.find(m => m.id === selectedTTS)?.name || "Select model"}
+                </span>
+
+                {/* Arrow */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${openTTS ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown List */}
+              {openTTS && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {ttsModels.length > 0 ? (
+                    ttsModels.map((model) => (
+                      <li
+                        key={model.id}
+                        onClick={() => {
+                          setSelectedTTS(model.id);
+                          setOpenTTS(false);
+                        }}
+                        className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {model.name}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-2 py-1 text-gray-400">Loading...</li>
+                  )}
+                </ul>
+              )}
             </div>
 
             <div>
-              <label className="text-xs text-[#6B7280]">
-                Creativity
+              <label className="text-xs text-[#6B7280] flex justify-between">
+                <span>Creativity</span>
+                <span className="text-[#111827] font-medium">
+                  {creativity}
+                </span>
               </label>
-              <input type="range" className="w-full mt-2" />
+
+              <input
+                type="range"
+                min="0"
+                max="7"
+                step="1"
+                value={creativity}
+                onChange={(e) => setCreativity(Number(e.target.value))}
+                className="w-full mt-2"
+              />
             </div>
 
             <div className="w-full h-[2px] bg-[#E5E7EB]"></div>
 
-            <div>
-              <label className="text-xs text-[#6B7280]">
-                Speaker 1 Voice
-              </label>
-              <select
-                value={speaker1}
-                onChange={(e) => setSpeaker1(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            <div className="relative">
+              <label className="text-xs text-[#6B7280]">Speaker 1 Voice</label>
+
+              {/* Button */}
+              <button
+                onClick={() => setOpen1(!open1)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm flex justify-between items-center"
               >
-                {voices.length > 0 ? (
-                  voices.map((voice) => (
-                    <option key={voice.id} value={voice.id}>
+                <span>
+                  {voices.find(v => v.id === speaker1)
+                    ? `${voices.find(v => v.id === speaker1)?.name} (${voices.find(v => v.id === speaker1)?.description})`
+                    : "Select voice"}
+                </span>
+
+                {/* Arrow */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${open1 ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown List */}
+              {open1 && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {voices.map((voice) => (
+                    <li
+                      key={voice.id}
+                      onClick={() => {
+                        setSpeaker1(voice.id);
+                        setOpen1(false);
+                      }}
+                      className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                    >
                       {voice.name} ({voice.description})
-                    </option>
-                  ))
-                ) : (
-                  <option>Loading...</option>
-                )}
-              </select>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
-            <div>
-              <label className="text-xs text-[#6B7280]">
-                Speaker 2 Voice
-              </label>
-              <select
-                value={speaker2}
-                onChange={(e) => setSpeaker2(e.target.value)}
-                className="w-full mt-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+            <div className="relative">
+              <label className="text-xs text-[#6B7280]">Speaker 2 Voice</label>
+
+              <button
+                onClick={() => setOpen(!open)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm text-left flex justify-between items-center"
               >
-                {voices.length > 0 ? (
-                  voices.map((voice) => (
-                    <option key={voice.id} value={voice.id}>
+                <span>
+                  {voices.find(v => v.id === speaker2)?.name || "Select voice"}
+                </span>
+
+                {/* Arrow Icon */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {open && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {voices.map((voice) => (
+                    <li
+                      key={voice.id}
+                      onClick={() => {
+                        setSpeaker2(voice.id);
+                        setOpen(false);
+                      }}
+                      className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                    >
                       {voice.name}
-                    </option>
-                  ))
-                ) : (
-                  <option>Loading...</option>
-                )}
-              </select>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
           </div>

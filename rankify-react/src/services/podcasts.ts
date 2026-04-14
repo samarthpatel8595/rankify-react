@@ -2,6 +2,7 @@ export type PodcastRequest = {
   input_text: string;
   speaker_voices: string[];
   num_speakers: number;
+  
   tts_model: string;
   text_model: string;
   temperature: number;
@@ -13,9 +14,9 @@ export type PodcastResponse = {
   source?: string;
 };
 
-const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL
+const podcastEndPoint = process.env.NEXT_PUBLIC_PODCAST_API_BASE_URL;
+const API_KEY = process.env.NEXT_PUBLIC_PODCAST_X_API_KEY;
 
-// ✅ GENERATE PODCAST
 export const generatePodcast = async (data: PodcastRequest) => {
   try {
     console.log("📤 PAYLOAD:", data);
@@ -24,23 +25,24 @@ export const generatePodcast = async (data: PodcastRequest) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": "AICERTS@123",
+        "x-api-key": API_KEY || "",
       },
       body: JSON.stringify(data),
     });
 
+    console.log("📡 STATUS:", res.status);
+
     const textResponse = await res.text();
+    console.log("📥 RAW RESPONSE:", textResponse);
 
     let result;
     try {
       result = JSON.parse(textResponse);
     } catch {
-      console.log("❌ RAW RESPONSE:", textResponse);
       throw new Error("Invalid JSON response from API");
     }
 
     if (!res.ok) {
-      console.log("❌ STATUS:", res.status);
       console.log("❌ ERROR RESPONSE:", result);
       throw new Error(result?.message || "Podcast generation failed");
     }
