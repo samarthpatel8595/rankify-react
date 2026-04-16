@@ -173,7 +173,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
       </div>
 
       {/* SEARCH + UPLOAD */}
-      <div className="mt-6 flex flex-col gap-4 lg:flex-row">
+      {/* <div className="mt-6 flex flex-col gap-4 lg:flex-row">
         <InputField
           wrapperClassName="flex-1 px-4 py-3"
           icon={<Search className="text-independence" size={20} />}
@@ -186,7 +186,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
         >
           Add File
         </Button>
-      </div>
+      </div> */}
     </section>
   );
 };
