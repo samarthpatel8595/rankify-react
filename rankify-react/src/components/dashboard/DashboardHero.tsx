@@ -117,7 +117,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
   return (
     <section>
       {/* HEADER */}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
 
         {/* LEFT TEXT */}
         <div>
@@ -130,7 +130,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
         </div>
 
         {/* RIGHT BUTTONS */}
-        <div className="flex items-center gap-3 ml-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:ml-auto w-full sm:w-auto">
 
           {/* FILTER BUTTON */}
           <div className="relative" ref={dropdownRef}>
@@ -161,7 +161,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
                   >
                     <X size={14} />
                   </button>
-                </div>
+                </div>                                
 
                 <div className="mt-3 flex max-h-64 flex-col gap-2 overflow-auto">
                   {projects.map((project) => {
@@ -189,7 +189,11 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
           </div>
 
           {/* EXPORT BUTTON */}
-         <Button onClick={handleExport} disabled={loading}>
+       <Button
+  onClick={handleExport}
+  disabled={loading }
+  className="w-full sm:w-auto px-4 py-2 text-sm h-[40px]"
+>
   {loading ? "Downloading..." : "Export"}
 </Button>
 
