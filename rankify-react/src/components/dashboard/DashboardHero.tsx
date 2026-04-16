@@ -5,7 +5,7 @@ import InputField from "@/components/common/InputField";
 import Button from "@/components/common/Button";
 import { useEffect, useRef, useState } from "react";
 import { getSources } from "@/services/dashboard";
-import type { SourceOption } from "@/services/dashboard";
+import { SourceOption,exportRuns } from "@/services/dashboard";
 
 type DashboardHeroProps = {
   onSelectProject?: (project: SourceOption | null) => void;
@@ -16,6 +16,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
   const [projects, setProjects] = useState<SourceOption[]>([]);
   const [selectedProject, setSelectedProject] = useState<SourceOption | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +47,33 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
+ const handleExport = async () => {
+  if (!selectedProject) {
+    alert("Please select project");
+    return;
+  }
 
+  setLoading(true);
+  try {
+    const blob = await exportRuns(selectedProject.source); // ✅ direct use
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `${selectedProject.label || "export"}.xlsx`; // ✅ correct extension
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error("Export failed:", error);
+  } finally {
+    setLoading(false);
+  }
+};
   // Fetch projects
   useEffect(() => {
     const fetchSources = async () => {
@@ -162,12 +189,9 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
           </div>
 
           {/* EXPORT BUTTON */}
-          <Button
-            className="px-5 py-3 text-sm shadow-sm lg:w-auto"
-            variant="secondary"
-          >
-            Export
-          </Button>
+         <Button onClick={handleExport} disabled={loading}>
+  {loading ? "Downloading..." : "Export"}
+</Button>
 
         </div>
       </div>

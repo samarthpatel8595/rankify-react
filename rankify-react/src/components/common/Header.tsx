@@ -23,16 +23,16 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           title: "Podcast Studio",
           subtitle: "Generate Podcast Script From Your Blog Posts",
         };
-      case "/keyword-research":
-        return {
-          title: "Keyword Research",
-          subtitle: "Discover high-potential keywords with AI-powered insights",
-        };
-      case "/youtube":
-        return {
-          title: "YouTube Manager",
-          subtitle: "Link YouTube Videos to Your Blog Posts for Better SEO",
-        };
+      // case "/keyword-research":
+      //   return {
+      //     title: "Keyword Research",
+      //     subtitle: "Discover high-potential keywords with AI-powered insights",
+      //   };
+      // case "/youtube":
+      //   return {
+      //     title: "YouTube Manager",
+      //     subtitle: "Link YouTube Videos to Your Blog Posts for Better SEO",
+      //   };
         case "/events":
         return {
           title: "Create New Event",

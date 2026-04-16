@@ -115,7 +115,7 @@ const KeywordResearch = () => {
     );
     return (
         <>
-            <section className={`${pathname === "/keyword-research" ? "" : "mt-6"} rounded-3xl`}>
+            {/* <section className={`${pathname === "/keyword-research" ? "" : "mt-6"} rounded-3xl`}>
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-4 mb-1">
@@ -296,7 +296,7 @@ const KeywordResearch = () => {
                         View All Keywords
                     </Button>
                 </div>
-            </section>
+            </section> */}
         </>
     )
 }

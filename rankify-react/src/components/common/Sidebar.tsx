@@ -9,8 +9,8 @@ const navItems = [
   { label: "Dashboard", href: "/", icon: DashboardIcon },
   { label: "Blogs", href: "/blogs", icon: BlogIcon },
   { label: "Podcasts", href: "/podcasts", icon: "podcasts" },
-  { label: "YouTube", href: "/youtube", icon: Youtube },
-  { label: "Keyword Research", href: "/keyword-research", icon: Search },
+  // { label: "YouTube", href: "/youtube", icon: Youtube },
+  // { label: "Keyword Research", href: "/keyword-research", icon: Search },
   { label: "Events", href: "/events", icon: "events" },
   { label: "Image Generation", href: "/image-generation", icon: "group" },
 ];

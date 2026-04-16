@@ -1,3 +1,6 @@
+// import { ImageGenerateResponse, ImageGenerateRequest } from "@/types/index"; // Adjust the import path as needed
+import { apiRequest } from ".";
+
 //
 const BASE_URL = process.env.NEXT_PUBLIC_IMG_API_BASE_URL!;
 const API_KEY = process.env.NEXT_PUBLIC_PODCAST_X_API_KEY as string;
@@ -6,24 +9,22 @@ const getHeaders = () => ({
   "Content-Type": "application/json",
   "x-api-key": API_KEY,
 });
-export const generateImages = async (payload: any) => {
-  const res = await fetch(`${BASE_URL}/api/generate`, { // ✅ FINAL FIX
-    method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify(payload),
-  });
+export const generateImage = async (
+  payload: any,
+): Promise<any> =>
+  apiRequest<any>(
+    {
+      method: "POST",
+      url: "/api/generate",
+      headers: getHeaders(),
+      data: payload,
+      timeout: 10 * 60 * 1000,
+    },
+    {
+      baseURL: BASE_URL,
+    },
+  );
  
-  const text = await res.text();
- 
-  console.log("STATUS:", res.status);
-  console.log("RAW RESPONSE:", text);
- 
-  if (!res.ok) {
-    throw new Error(`API Error: ${text}`);
-  }
- 
-  return JSON.parse(text);
-};
 // -----------------------------
 // MODELS
 // -----------------------------
