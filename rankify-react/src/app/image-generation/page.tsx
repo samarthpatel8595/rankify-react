@@ -8,7 +8,7 @@ export default function ImageGenerationPage() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [logo, setLogo] = useState<File | null>(null);
-  const [models, setModels] = useState<any[]>([]); //
+  const [models, setModels] = useState<any[]>([]); // 
 
   const [form, setForm] = useState({
     title: "",
