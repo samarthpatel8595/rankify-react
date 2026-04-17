@@ -10,17 +10,19 @@
   --anti-flash: #f3f4f6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-sunray: var(--sunray);
-  --color-floral: var(--floral-white);
-  --color-platinum: var(--platinum);
-  --color-independence: var(--independence);
-  --color-ink: var(--foreground);
-  --color-anti-flash: var(--anti-flash);
-  --font-sans: var(--font-open-sans);
-  --font-display: var(--font-open-sans);
+@layer theme {
+  :root {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-sunray: var(--sunray);
+    --color-floral: var(--floral-white);
+    --color-platinum: var(--platinum);
+    --color-independence: var(--independence);
+    --color-ink: var(--foreground);
+    --color-anti-flash: var(--anti-flash);
+    --font-sans: var(--font-open-sans);
+    --font-display: var(--font-open-sans);
+  }
 }
 
 body {
