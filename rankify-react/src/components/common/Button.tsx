@@ -49,7 +49,7 @@ const Button = ({
       variantClasses = "";
   }
   const stateClasses = disabled
-    ? "cursor-not-allowed opacity-60"
+    ? "cursor-not-allowed opacity-100"
     : "cursor-pointer";
 
   return (
