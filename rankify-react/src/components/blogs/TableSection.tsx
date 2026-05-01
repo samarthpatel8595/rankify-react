@@ -1,7 +1,27 @@
+"use client";
 import React from 'react'
 import InputField from '@/components/common/InputField';
-import { Archive, FileCode, FileImage, FileText, MoreVertical, Search, SlidersHorizontal } from 'lucide-react';
+import { Archive, ArrowUpRight, FileCode, FileImage, FileText, MoreVertical, Search, SlidersHorizontal } from 'lucide-react';
 import Button from '@/components/common/Button';
+import { useRouter } from 'next/navigation';
+import { create } from "zustand";
+
+export const useProjectStore = create((set) => ({
+    selectedProject: null,
+    setProject: (data: any) => set({ selectedProject: data }),
+}));
+
+
+
+// Array of 6 items to create the 3x2 grid
+const projectsData = [
+    { id: 1, title: 'Adoptify AI', blogs: 120, status: 'Active' },
+    { id: 2, title: 'AI CERTs', blogs: 85, status: 'Running' },
+    { id: 3, title: 'AI News Daily', blogs: 210, status: 'Active' },
+    { id: 4, title: 'TechVault Pro', blogs: 64, status: 'Active' },
+    { id: 5, title: 'GreenEarth Blog', blogs: 42, status: 'Paused' },
+    { id: 6, title: 'FinScope AI', blogs: 156, status: 'Active' },
+];
 
 const files = [
     {
@@ -57,97 +77,86 @@ const files = [
 ];
 
 const TableSection = () => {
+    const router = useRouter();
     return (
         <>
-            <section className="mt-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <InputField
-                        wrapperClassName="w-full max-w-md px-4 py-3"
-                        inputClassName="text-xs sm:text-sm"
-                        icon={<Search className="text-independence" size={16} />}
-                        placeholder="Search files..."
-                    />
-                    <Button
-                        className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs shadow-sm sm:w-auto sm:text-sm"
-                        icon={<SlidersHorizontal size={16} />}
-                        variant="secondary"
-                    >
-                        Any Date
-                    </Button>
-                </div>
-            </section>
-            <section className="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-[0_14px_30px_-24px_rgba(15,23,42,0.35)] sm:p-5">
-                <div className="overflow-hidden rounded-2xl">
-                    <div className="hidden grid-cols-[2.2fr_0.8fr_1.2fr_1.2fr_0.4fr] gap-4 px-2 py-1 text-xs font-bold text-independence sm:grid">
-                        <span>File Name</span>
-                        <span>Size</span>
-                        <span>Last Modified</span>
-                        <span>Date of Upload</span>
-                        <span className="text-right">Actions</span>
-                    </div>
-                    <div className="divide-y divide-slate-100">
-                        {files.map((file) => {
-                            const Icon = file.icon;
-                            return (
-                                <div
-                                    key={file.id}
-                                    className="grid grid-cols-1 gap-3 px-2 py-4 text-sm text-slate-600 sm:grid-cols-[2.2fr_0.8fr_1.2fr_1.2fr_0.4fr] sm:items-center"
-                                >
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div className="flex min-w-0 items-center gap-3">
-                                            <span
-                                                className={`flex h-10 w-10 items-center justify-center rounded-[10px] ${file.iconBg}`}
-                                            >
-                                                <Icon size={18} className="text-sunray" />
-                                            </span>
-                                            <div className="min-w-0">
-                                                <p className="wrap-break-word text-sm font-normal text-ink">
-                                                    {file.name}
-                                                </p>
-                                                <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-slate-400 sm:hidden">
-                                                    <span>{file.size}</span>
-                                                    <span>•</span>
-                                                    <span>{file.modified}</span>
-                                                    <span>•</span>
-                                                    <span className="wrap-break-word">{file.uploaded}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-independence hover:bg-slate-100 sm:hidden"
-                                            aria-label={`Open actions for ${file.name}`}
-                                        >
-                                            <MoreVertical size={16} />
-                                        </button>
-                                    </div>
+            <div className="flex flex-col gap-1">
+                <h2 className="text-2xl font-semibold text-ink leading-none">Projects</h2>
+                <p className="text-sm text-independence">Manage your AI blog generation projects</p>
+            </div>
 
-                                    <span className="hidden text-xs text-slate-500 sm:block">
-                                        {file.size}
-                                    </span>
-                                    <span className="hidden text-xs text-slate-500 sm:block">
-                                        {file.modified}
-                                    </span>
-                                    <span className="hidden text-xs text-slate-500 sm:block">
-                                        {file.uploaded}
-                                    </span>
-                                    <div className="hidden items-center justify-end sm:flex">
-                                        <button
-                                            type="button"
-                                            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-independence hover:bg-slate-100"
-                                            aria-label={`Open actions for ${file.name}`}
-                                        >
-                                            <MoreVertical size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-8xl">
+
+                {projectsData.map((project) => (
+                    <div key={project.id} className="flex flex-col p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
+
+                        <div className="flex justify-between items-start mb-5">
+                            <div className="flex justify-center items-center w-14 h-14 bg-[#FCFAEF] rounded-full">
+                                <FileText className="text-[#CBA548]" size={26} strokeWidth={1.5} />
+                            </div>
+
+                            <span className={`px-3 py-1 text-xs font-medium border rounded-full
+    ${project?.status === "Active"
+                                    ? "text-green-600 bg-green-50 border-green-400"
+                                    : project?.status === "Running"
+                                        ? "text-blue-600 bg-blue-50 border-blue-400"
+                                        : "text-gray-500 bg-gray-50 border-gray-300"
+                                }`}>
+                                {project.status}
+                            </span>
+                        </div>
+
+                        <div className="mb-6">
+                            <h3 className="text-base font-semibold text-[#1E293B]">
+                                {project.title}
+                            </h3>
+                            <p className="text-[15px] text-slate-500 mt-1">
+                                {project.blogs} Blogs
+                            </p>
+                        </div>
+
+                        <div className="flex gap-3 mt-auto">
+                            <button className="flex flex-1 justify-center items-center py-2.5 px-4 text-[15px] font-medium text-[#334155] bg-white border border-[#E2E8F0] rounded-xl hover:bg-slate-50 gap-2">
+                                Open Sheet <ArrowUpRight size={18} />
+                            </button>
+
+                            <button
+                                onClick={
+
+                                    () => router.push(`/blogs/${project.id}`)}
+                                className="flex flex-1 gap-2 justify-center items-center py-2.5 px-4 text-[15px] font-medium text-white bg-[#CBA548] rounded-xl"
+                            >
+                                Manage
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="14"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M10 5H3" />
+                                    <path d="M12 19H3" />
+                                    <path d="M14 3v4" />
+                                    <path d="M16 17v4" />
+                                    <path d="M21 12h-9" />
+                                    <path d="M21 19h-5" />
+                                    <path d="M21 5h-7" />
+                                    <path d="M8 10v4" />
+                                    <path d="M8 12H3" />
+                                </svg>
+                            </button>
+                        </div>
+
                     </div>
-                </div>
-            </section>
+                ))}
+
+            </div>
         </>
-    )
-}
+    );
+};
 
 export default TableSection

@@ -1,11 +1,10 @@
 "use client";
-
 import { Funnel, Search, Upload, X } from "lucide-react";
 import InputField from "@/components/common/InputField";
 import Button from "@/components/common/Button";
 import { useEffect, useRef, useState } from "react";
 import { getSources } from "@/services/dashboard";
-import { SourceOption,exportRuns } from "@/services/dashboard";
+import { SourceOption, exportRuns } from "@/services/dashboard";
 
 type DashboardHeroProps = {
   onSelectProject?: (project: SourceOption | null) => void;
@@ -47,33 +46,33 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
- const handleExport = async () => {
-  if (!selectedProject) {
-    alert("Please select project");
-    return;
-  }
+  const handleExport = async () => {
+    if (!selectedProject) {
+      alert("Please select project");
+      return;
+    }
 
-  setLoading(true);
-  try {
-    const blob = await exportRuns(selectedProject.source); // ✅ direct use
+    setLoading(true);
+    try {
+      const blob = await exportRuns(selectedProject.source); // ✅ direct use
 
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
 
-    a.href = url;
-    a.download = `${selectedProject.label || "export"}.xlsx`; // ✅ correct extension
-    document.body.appendChild(a);
-    a.click();
+      a.href = url;
+      a.download = `${selectedProject.label || "export"}.xlsx`; // ✅ correct extension
+      document.body.appendChild(a);
+      a.click();
 
-    a.remove();
-    window.URL.revokeObjectURL(url);
+      a.remove();
+      window.URL.revokeObjectURL(url);
 
-  } catch (error) {
-    console.error("Export failed:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      console.error("Export failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   // Fetch projects
   useEffect(() => {
     const fetchSources = async () => {
@@ -161,7 +160,7 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
                   >
                     <X size={14} />
                   </button>
-                </div>                                
+                </div>
 
                 <div className="mt-3 flex max-h-64 flex-col gap-2 overflow-auto">
                   {projects.map((project) => {
@@ -173,11 +172,10 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
                         key={project.source}
                         type="button"
                         onClick={() => handleSelect(project)}
-                        className={`rounded-xl px-4 py-2 text-left text-sm ${
-                          isSelected
+                        className={`rounded-xl px-4 py-2 text-left text-sm ${isSelected
                             ? "border border-sunray bg-floral text-ink shadow-sm"
                             : "border border-transparent bg-anti-flash text-independence hover:border-sunray/50 hover:bg-sunray/5"
-                        }`}
+                          }`}
                       >
                         {project.label}
                       </button>
@@ -189,14 +187,17 @@ const DashboardHero = ({ onSelectProject }: DashboardHeroProps) => {
           </div>
 
           {/* EXPORT BUTTON */}
-       <Button
-  onClick={handleExport}
-  disabled={loading }
-  className="w-full sm:w-auto px-4 py-2 text-sm h-[40px]"
->
-  {loading ? "Downloading..." : "Export"}
-</Button>
-
+          <Button
+            type="button"
+            onClick={handleExport}
+            disabled={loading}
+            className={`w-full sm:w-auto rounded-xl px-4 py-2 text-sm ${loading
+                ? "bg-anti-flash text-independence cursor-not-allowed"
+                : "border border-transparent bg-anti-flash text-independence hover:border-sunray/50 hover:bg-sunray/5"
+              }`}
+          >
+            {loading ? "Downloading..." : "Export"}
+          </Button>
         </div>
       </div>
 

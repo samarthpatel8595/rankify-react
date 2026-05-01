@@ -7,8 +7,8 @@ import { Filter } from "lucide-react";
 export default function CreateEventPage() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  
-  
+
+
   // ✅ SINGLE FORM DATA STATE
   const [formData, setFormData] = useState({
     eventType: "",
@@ -70,7 +70,7 @@ export default function CreateEventPage() {
             Create New Event
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">
-Configure event details, audience filters and scheduling parameters.
+            Configure event details, audience filters and scheduling parameters.
 
 
           </p>
@@ -160,16 +160,16 @@ Configure event details, audience filters and scheduling parameters.
             {["Start Date", "End Date", "Start Time", "End Time"].map((item) => {
               const key = item.replace(" ", "").toLowerCase() as keyof typeof formData;
               return (
-              <div key={item}>
-                <label className="text-sm text-[#6B7280]">{item}</label>
-                <input
-                  type={item.includes("Time") ? "time" : "date"}
-                  name={key}
-                  value={formData[key] || ""}
-                  onChange={handleChange}
-                  className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-                />
-              </div>
+                <div key={item}>
+                  <label className="text-sm text-[#6B7280]">{item}</label>
+                  <input
+                    type={item.includes("Time") ? "time" : "date"}
+                    name={key}
+                    value={formData[key] || ""}
+                    onChange={handleChange}
+                    className="w-full mt-2 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                  />
+                </div>
               );
             })}
           </div>
@@ -279,6 +279,7 @@ Configure event details, audience filters and scheduling parameters.
             </div>
           </div>
         </div>
+
 
         {/* Welcome Message */}
         <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 md:p-6">

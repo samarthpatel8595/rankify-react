@@ -1,276 +1,352 @@
 "use client";
- 
-import { useState } from "react";
-import { generateImages } from "@/services/image";
- 
-export default function ImageGenerationPage() {
- 
+
+import { useState, useEffect } from "react";
+import LayoutShell from "@/components/common/LayoutShell";
+import { generatePodcast, fetchModels } from "@/services/podcasts";
+import { fetchVoices } from "@/services/podcasts";
+
+export default function TextToPodcastPage() {
+  const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
-  const [logo, setLogo] = useState<File | null>(null);
- 
-  const [form, setForm] = useState({
-    title: "",
-    subtitle: "",
-    body: "",
-    cta: "",
-    num_images: 1,
-    aspect_ratio: "",
-    resolution: "",
-    gemini_model: "",
-  });
- 
-  const content = [
-    form.title,
-    form.subtitle,
-    form.body,
-    form.cta,
-  ];
- 
-  const handleChange = (key: string, value: any) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+
+  const [ttsModels, setTtsModels] = useState<any[]>([]);
+  const [selectedTTS, setSelectedTTS] = useState(
+    "gemini-2.5-flash-preview-tts"
+  );
+  const [textModels, setTextModels] = useState<any[]>([]);
+  const [selectedTextModel, setSelectedTextModel] = useState(
+    "gemini-3-pro-preview"
+  );
+  const [voices, setVoices] = useState<any[]>([]);
+  const [speaker1, setSpeaker1] = useState("achernar");
+  const [speaker2, setSpeaker2] = useState("enceladus");
+  const [creativity, setCreativity] = useState(3);
+  const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
+  const [openTTS, setOpenTTS] = useState(false);
+  const [openText, setOpenText] = useState(false);
+
+  useEffect(() => {
+    const loadModels = async () => {
+      const data = await fetchModels();
+      setTtsModels(data?.tts_models || []);
+      setTextModels(data?.text_models || []);
+    };
+    loadModels();
+  }, []);
+
+  useEffect(() => {
+    const loadVoices = async () => {
+      const data = await fetchVoices();
+      setVoices(data?.voices || []);
+    };
+    loadVoices();
+  }, []);
+
+  const downloadAudio = (url: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank"; // important
+    link.rel = "noopener noreferrer";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
- 
+
   const handleGenerate = async () => {
- 
-    if (!form.title.trim() || !form.subtitle.trim() || !form.body.trim()) {
-      alert("Please fill Title, Subtitle and Body");
+    if (!text.trim()) {
+      alert("Please enter some text!");
       return;
     }
- 
+
     try {
       setLoading(true);
-      setImages([]);
- 
-      const payload = {
-        content: content,
-        num_images: form.num_images,
-        aspect_ratio: form.aspect_ratio,
-        image_size: form.resolution,
-        gemini_model: form.gemini_model || "gemini-3-pro-preview",
-        logo: logo ? {
-          name: logo.name,
-          type: logo.type,
-          size: logo.size,
-        } : null,
-      };
- 
-      console.log("📤 REQUEST PAYLOAD:", payload);
- 
-      await new Promise((res) => setTimeout(res, 1500));
- 
-    } catch (err) {
-      console.log("❌ ERROR:", err);
+
+      const res = await generatePodcast({
+        input_text: text,
+        speaker_voices: [speaker1, speaker2],
+        num_speakers: 2,
+        tts_model: selectedTTS,
+        text_model: selectedTextModel,
+        temperature: 0.7,
+      });
+
+      console.log("API RESPONSE 👉", res);
+
+      // ✅ IMPORTANT: direct audio_url use karo
+      if (res?.audio_url) {
+        downloadAudio(res.audio_url);
+      }
+      else {
+        alert("Audio not generated");
+      }
+
+    } catch (error) {
+      alert("Podcast generation failed ❌");
     } finally {
       setLoading(false);
     }
   };
- 
-  const handleLogoUpload = (file: File) => {
-    setLogo(file);
-  };
- 
+
   return (
     <>
-      {/* LOADER */}
       {loading && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white px-6 py-5 rounded-xl shadow-lg text-center">
-            <div className="animate-spin h-10 w-10 border-b-2 border-[#C9A227] mx-auto mb-3 rounded-full"></div>
-            <p>Generating Images...</p>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white px-6 py-5 rounded-xl shadow-lg text-center w-full max-w-sm">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#CFA935] mx-auto mb-3"></div>
+            <p className="text-sm font-medium text-[#111827]">
+              Generating Podcast...
+            </p>
           </div>
         </div>
       )}
- 
-      <div className="p-3 md:p-6 space-y-6">
- 
-        {/* Header */}
-        <div className="mb-5">
-          <h1 className="text-[20px] md:text-[22px] font-semibold text-[#111827]">
-            Image Generation
-          </h1>
-          <p className="text-sm text-[#6B7280] mt-1">
-            Create high-quality marketing visuals using AI-Powered automative
-          </p>
-        </div>
- 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- 
-          {/* LEFT */}
-          <div className="md:col-span-2 space-y-4">
- 
-            <div className="bg-white p-4 md:p-5 rounded-xl border border-[#E5E7EB]">
- 
-              <h2 className="text-sm font-semibold text-[#374151] mb-4">
-                Post Content (STRICT FORMAT)
-              </h2>
- 
-              <label className="text-xs text-[#6B7280]">TITLE:</label>
-              <input
-                value={form.title}
-                onChange={(e) => handleChange("title", e.target.value)}
-                className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-              />
- 
-              <label className="text-xs text-[#6B7280]">SUBTITLE:</label>
-              <input
-                value={form.subtitle}
-                onChange={(e) => handleChange("subtitle", e.target.value)}
-                className="w-full mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-              />
- 
-              <label className="text-xs text-[#6B7280]">BODY:</label>
+
+      <div className="p-3 sm:p-4 md:p-6 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <div className="lg:col-span-2 bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
+            <div>
+              <h1 className="text-base sm:text-lg font-semibold text-[#111827]">
+                Text to Podcast
+              </h1>
+
+              <p className="text-xs sm:text-sm text-[#6B7280] mt-1">
+                Convert your text into AI-generated podcast audio.
+              </p>
+
+              <div className="mt-4 mb-2 text-sm font-medium">
+                ✨ Input Content
+              </div>
+
               <textarea
-                value={form.body}
-                onChange={(e) => handleChange("body", e.target.value)}
-                className="w-full h-32 mt-1 mb-4 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
-              />
- 
-              <label className="text-xs text-[#6B7280]">CTA BUTTON:</label>
-              <input
-                value={form.cta}
-                onChange={(e) => handleChange("cta", e.target.value)}
-                className="w-full mt-1 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Paste article, paper, or notes here"
+                className="w-full h-[250px] sm:h-[320px] md:h-[420px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3 sm:p-4 text-sm outline-none resize-none"
               />
             </div>
- 
+
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="w-full bg-[#C9A227] text-white py-3 rounded-xl font-medium disabled:opacity-50"
+              className="mt-4 w-full bg-[#CFA935] hover:bg-[#b8932f] text-white py-3 rounded-lg text-sm font-medium disabled:opacity-50"
             >
-              {loading ? "Generating..." : "✨ Generate Images"}
+              {loading ? "Generating..." : "✨ Generate Podcast Audio"}
             </button>
- 
-            {images.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt="generated"
-                    className="rounded-xl border border-[#E5E7EB]"
-                  />
-                ))}
-              </div>
-            )}
- 
+
+            {/* ❌ No audio UI */}
           </div>
- 
-          {/* RIGHT */}
-          <div className="bg-white p-4 md:p-5 rounded-xl border border-[#E5E7EB]">
- 
-            <h2 className="text-sm font-semibold text-[#374151] mb-4">
-              ✨ Configuration
-            </h2>
- 
-            {/* GEMINI */}
-            <label className="text-xs text-[#6B7280]">Gemini Model</label>
-            <select
-              onChange={(e) => handleChange("gemini_model", e.target.value)}
-              className="w-full mt-1 mb-4 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB] appearance-none bg-white hover:bg-gray-100"
-            >
-              <option>Gemini 3 Pro Image Premium Gener</option>
-            </select>
- 
-            {/* NUMBER */}
-            <label className="text-xs text-[#6B7280]">Number of Images</label>
-            <div className="flex items-center gap-2 mt-1 mb-4">
+
+          <div className="bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl p-4 sm:p-5 space-y-4 sm:space-y-5">
+
+            <div className="text-sm font-medium">⚙ Configuration</div>
+
+            <div className="relative">
+              <label className="text-xs text-[#6B7280]">
+                Gemini Text Model
+              </label>
+
+              {/* Button */}
               <button
-                onClick={() =>
-                  handleChange("num_images", Math.max(1, form.num_images - 1))
-                }
-                className="w-8 h-8 border border-[#E5E7EB] rounded-md"
-              >-</button>
- 
+                onClick={() => setOpenText(!openText)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm flex justify-between items-center"
+              >
+                <span>
+                  {textModels.find(m => m.id === selectedTextModel)?.name || "Select model"}
+                </span>
+
+                {/* Arrow */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${openText ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown List */}
+              {openText && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {textModels.length > 0 ? (
+                    textModels.map((model) => (
+                      <li
+                        key={model.id}
+                        onClick={() => {
+                          setSelectedTextModel(model.id);
+                          setOpenText(false);
+                        }}
+                        className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {model.name}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-2 py-1 text-gray-400">No models found</li>
+                  )}
+                </ul>
+              )}
+            </div>
+
+            <div className="relative">
+              <label className="text-xs text-[#6B7280]">
+                Gemini TTS Model
+              </label>
+
+              {/* Button */}
+              <button
+                onClick={() => setOpenTTS(!openTTS)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm flex justify-between items-center"
+              >
+                <span>
+                  {ttsModels.find(m => m.id === selectedTTS)?.name || "Select model"}
+                </span>
+
+                {/* Arrow */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${openTTS ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown List */}
+              {openTTS && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {ttsModels.length > 0 ? (
+                    ttsModels.map((model) => (
+                      <li
+                        key={model.id}
+                        onClick={() => {
+                          setSelectedTTS(model.id);
+                          setOpenTTS(false);
+                        }}
+                        className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {model.name}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-2 py-1 text-gray-400">Loading...</li>
+                  )}
+                </ul>
+              )}
+            </div>
+
+            <div>
+              <label className="text-xs text-[#6B7280] flex justify-between">
+                <span>Creativity</span>
+                <span className="text-[#111827] font-medium">
+                  {creativity}
+                </span>
+              </label>
+
               <input
-                value={form.num_images}
-                readOnly
-                className="flex-1 border border-[#E5E7EB] rounded-lg text-center py-1 bg-[#F3F4F6]"
+                type="range"
+                min="0"
+                max="7"
+                step="1"
+                value={creativity}
+                onChange={(e) => setCreativity(Number(e.target.value))}
+                className="w-full mt-2"
               />
- 
+            </div>
+
+            <div className="w-full h-[2px] bg-[#E5E7EB]"></div>
+
+            <div className="relative">
+              <label className="text-xs text-[#6B7280]">Speaker 1 Voice</label>
+
+              {/* Button */}
               <button
-                onClick={() =>
-                  handleChange("num_images", form.num_images + 1)
-                }
-                className="w-8 h-8 border border-[#E5E7EB] rounded-md"
-              >+</button>
+                onClick={() => setOpen1(!open1)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm flex justify-between items-center"
+              >
+                <span>
+                  {voices.find(v => v.id === speaker1)
+                    ? `${voices.find(v => v.id === speaker1)?.name} (${voices.find(v => v.id === speaker1)?.description})`
+                    : "Select voice"}
+                </span>
+
+                {/* Arrow */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${open1 ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown List */}
+              {open1 && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {voices.map((voice) => (
+                    <li
+                      key={voice.id}
+                      onClick={() => {
+                        setSpeaker1(voice.id);
+                        setOpen1(false);
+                      }}
+                      className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {voice.name} ({voice.description})
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
- 
-            {/* ASPECT */}
-            <label className="text-xs text-[#6B7280]">Aspect Ratio</label>
-            <select
-              onChange={(e) => handleChange("aspect_ratio", e.target.value)}
-              className="w-full mt-1 mb-4 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB] appearance-none bg-white hover:bg-gray-100"
-            >
-              <option value="1:1">1:1</option>
-              <option value="16:9">16:9</option>
-            </select>
- 
-            {/* RESOLUTION */}
-            <label className="text-xs text-[#6B7280]">Image Resolution</label>
-            <select
-              onChange={(e) => handleChange("resolution", e.target.value)}
-              className="w-full mt-1 mb-4 border border-[#E5E7EB] rounded-md px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 focus:border-[#E5E7EB] appearance-none bg-white hover:bg-gray-100"
-            >
-              <option value="512">512</option>
-              <option value="1024">1024</option>
-            </select>
- 
-            {/* UPLOAD */}
-            <label className="text-xs text-[#6B7280]">Upload Logo (Optional)</label>
- 
-            <div
-              className="mt-2 border-2 border-dashed border-[#E5E7EB] rounded-xl p-6 text-center"
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                if (e.dataTransfer.files[0]) {
-                  handleLogoUpload(e.dataTransfer.files[0]);
-                }
-              }}
-            >
-              <p className="text-sm text-[#6B7280]">
-                Drag and drop file here
-              </p>
-              <p className="text-xs text-[#9CA3AF] mt-1">
-                Limit 200MB per file • PNG, JPG
-              </p>
+
+            <div className="relative">
+              <label className="text-xs text-[#6B7280]">Speaker 2 Voice</label>
+
+              <button
+                onClick={() => setOpen(!open)}
+                className="w-full mt-1 border border-[#E5E7EB] rounded-md px-2 py-1 text-sm text-left flex justify-between items-center"
+              >
+                <span>
+                  {voices.find(v => v.id === speaker2)?.name || "Select voice"}
+                </span>
+
+                {/* Arrow Icon */}
+                <svg
+                  className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {open && (
+                <ul className="absolute w-full mt-1 border border-[#E5E7EB] rounded-md bg-white max-h-40 overflow-y-auto text-xs z-10">
+                  {voices.map((voice) => (
+                    <li
+                      key={voice.id}
+                      onClick={() => {
+                        setSpeaker2(voice.id);
+                        setOpen(false);
+                      }}
+                      className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {voice.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
- 
-            <button
-              onClick={() => document.getElementById("logoInput")?.click()}
-              className="w-full mt-3 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg py-2 text-sm text-[#374151] hover:bg-gray-200"
-            >
-              Browse files
-            </button>
- 
-            <input
-              id="logoInput"
-              type="file"
-              accept="image/png, image/jpeg"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files?.[0]) {
-                  handleLogoUpload(e.target.files[0]);
-                }
-              }}
-            />
- 
-            {logo && (
-              <div className="mt-3">
-                <p className="text-xs text-[#6B7280] mb-1">Preview:</p>
-                <img
-                  src={URL.createObjectURL(logo)}
-                  alt="logo"
-                  className="w-24 h-24 object-contain border rounded-md"
-                />
-                <p className="text-xs mt-2 text-[#6B7280]">
-                  {logo.name}
-                </p>
-              </div>
-            )}
- 
+
           </div>
         </div>
       </div>

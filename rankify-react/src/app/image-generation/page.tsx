@@ -122,8 +122,7 @@ export default function ImageGenerationPage() {
     subtitle: form.subtitle,
     body: form.body,
     cta: form.cta,
-  }
-    ;
+  };
 
   const handleChange = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
